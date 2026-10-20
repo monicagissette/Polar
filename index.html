@@ -1,0 +1,4816 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#05131f">
+  <meta name="description" content="#ENGLISH ON ICE: an interactive polar English adventure with missions, XP and a hall of fame.">
+  <title>#ENGLISH ON ICE — Polar English Adventure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23082133'/%3E%3Cpath d='M32 10v44M12 21l40 22M12 43l40-22' stroke='%2372e0ff' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%23f2cf8c'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #03111c;
+      --bg-soft: #071a2a;
+      --panel: #082033;
+      --panel-2: #0b2a40;
+      --ice: #eefaff;
+      --frost: #b8e2f4;
+      --muted: #8eb3c7;
+      --cyan: #72e0ff;
+      --cyan-soft: #a9ecff;
+      --gold: #f2cf8c;
+      --gold-deep: #b78c4c;
+      --wood: #3a2115;
+      --danger: #ff8c9a;
+      --success: #7ff0c1;
+      --line: rgba(184, 226, 244, 0.16);
+      --glass: rgba(8, 32, 51, 0.74);
+      --radius: 24px;
+      --shadow: 0 26px 80px rgba(0, 0, 0, 0.42);
+      --font-body: "Manrope", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: "Cinzel", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      min-height: 100dvh;
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(1100px 700px at 50% -12%, rgba(38, 112, 148, 0.48), transparent 62%),
+        radial-gradient(720px 520px at 3% 24%, rgba(20, 80, 106, 0.28), transparent 70%),
+        radial-gradient(760px 580px at 100% 3%, rgba(60, 40, 84, 0.24), transparent 62%),
+        linear-gradient(180deg, #03101b 0%, #071c2b 40%, #04131f 100%);
+      color: var(--ice);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 3px;
+    }
+
+    ::selection {
+      color: #04131f;
+      background: var(--cyan);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .ambient {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .ambient .aurora-glow {
+      position: absolute;
+      top: -20%;
+      left: -20%;
+      width: 85%;
+      height: 55%;
+      background: linear-gradient(110deg, transparent 12%, rgba(89, 235, 200, 0.18) 38%, rgba(114, 224, 255, 0.16) 55%, rgba(185, 149, 255, 0.11) 72%, transparent 88%);
+      filter: blur(48px);
+      opacity: 0.8;
+      transform: rotate(-8deg) skewY(-5deg);
+      animation: ambientDrift 18s ease-in-out infinite alternate;
+    }
+
+    .ambient .aurora-glow.two {
+      top: 2%;
+      left: auto;
+      right: -25%;
+      width: 72%;
+      height: 42%;
+      opacity: 0.44;
+      animation-delay: -7s;
+      animation-duration: 23s;
+    }
+
+    .stars,
+    .arctic-stars {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(1.4px 1.4px at 18% 23%, rgba(255, 255, 255, 0.9), transparent 100%),
+        radial-gradient(1px 1px at 37% 12%, rgba(196, 240, 255, 0.9), transparent 100%),
+        radial-gradient(1.3px 1.3px at 66% 18%, rgba(255, 255, 255, 0.78), transparent 100%),
+        radial-gradient(1px 1px at 83% 36%, rgba(255, 255, 255, 0.8), transparent 100%),
+        radial-gradient(1.2px 1.2px at 26% 52%, rgba(175, 234, 255, 0.65), transparent 100%),
+        radial-gradient(1px 1px at 55% 44%, rgba(255, 255, 255, 0.6), transparent 100%),
+        radial-gradient(1.1px 1.1px at 92% 74%, rgba(255, 255, 255, 0.8), transparent 100%),
+        radial-gradient(1px 1px at 8% 84%, rgba(255, 255, 255, 0.55), transparent 100%);
+      background-size: 290px 290px;
+      opacity: 0.45;
+      animation: twinkle 8s ease-in-out infinite alternate;
+    }
+
+    .snow-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .snowflake {
+      position: absolute;
+      top: -8vh;
+      width: var(--size, 4px);
+      height: var(--size, 4px);
+      border-radius: 50%;
+      background: rgba(239, 251, 255, 0.82);
+      box-shadow: 0 0 7px rgba(181, 236, 255, 0.48);
+      opacity: var(--opacity, 0.5);
+      animation: snowFall var(--duration, 14s) linear var(--delay, 0s) infinite;
+      will-change: transform;
+    }
+
+    .app {
+      position: relative;
+      z-index: 2;
+      width: min(100%, 1360px);
+      margin: 0 auto;
+      padding: 0 12px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: calc(14px + env(safe-area-inset-top)) 2px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(242, 207, 140, 0.44);
+      border-radius: 13px;
+      background:
+        linear-gradient(145deg, rgba(114, 224, 255, 0.18), rgba(7, 26, 42, 0.5)),
+        rgba(8, 32, 51, 0.82);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 24px rgba(0, 0, 0, 0.22);
+      color: var(--gold);
+    }
+
+    .brand-mark svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .brand-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .brand-copy b {
+      font-size: 0.58rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      color: var(--frost);
+      white-space: nowrap;
+    }
+
+    .brand-copy small {
+      font-size: 0.52rem;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .icon-btn,
+    .podium-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      color: var(--ice);
+      background: rgba(8, 32, 51, 0.72);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .icon-btn {
+      width: 40px;
+      padding: 0;
+      border-radius: 13px;
+    }
+
+    .podium-btn {
+      padding: 0 12px;
+      border-radius: 13px;
+      border-color: rgba(242, 207, 140, 0.3);
+      color: var(--gold);
+      font-size: 0.63rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .podium-btn .trophy {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .icon-btn:hover,
+    .podium-btn:hover {
+      border-color: rgba(114, 224, 255, 0.45);
+      background: rgba(13, 46, 70, 0.92);
+    }
+
+    .icon-btn:active,
+    .podium-btn:active {
+      transform: scale(0.96);
+    }
+
+    .icon-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .icon-btn.is-muted {
+      color: var(--muted);
+      opacity: 0.72;
+    }
+
+    .hero {
+      position: relative;
+      padding: 22px 4px 24px;
+      text-align: center;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      top: 54%;
+      width: 13%;
+      max-width: 110px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(242, 207, 140, 0.68));
+    }
+
+    .hero::before {
+      left: 4%;
+    }
+
+    .hero::after {
+      right: 4%;
+      transform: rotate(180deg);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.53rem;
+      font-weight: 800;
+      letter-spacing: 0.24em;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before,
+    .eyebrow::after {
+      content: "";
+      width: 14px;
+      height: 1px;
+      background: currentColor;
+      opacity: 0.5;
+    }
+
+    .hero-title {
+      position: relative;
+      display: inline-block;
+      margin: 9px auto 4px;
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 8.2vw, 5.15rem);
+      font-weight: 700;
+      letter-spacing: 0.025em;
+      line-height: 1.02;
+      white-space: nowrap;
+      background: linear-gradient(180deg, #ffffff 7%, #f0fbff 28%, #c5ebf9 58%, #80c8e4 84%, #5da6c8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-stroke: 0.5px rgba(238, 250, 255, 0.32);
+      filter: drop-shadow(0 3px 0 rgba(5, 27, 43, 0.88)) drop-shadow(0 12px 22px rgba(0, 0, 0, 0.32));
+    }
+
+    .hero-title::before {
+      content: "#ENGLISH ON ICE";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      color: rgba(217, 249, 255, 0.22);
+      -webkit-text-stroke: 3px rgba(219, 247, 255, 0.26);
+      filter: blur(5px);
+      transform: translateY(-2px);
+      pointer-events: none;
+    }
+
+    .hero-title::after {
+      content: "";
+      position: absolute;
+      top: 3%;
+      left: 4%;
+      width: 42%;
+      height: 20%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+      filter: blur(5px);
+      opacity: 0.55;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .snow-flake {
+      position: absolute;
+      color: rgba(222, 248, 255, 0.9);
+      text-shadow: 0 0 14px rgba(114, 224, 255, 0.8);
+      animation: flakeFloat 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .snow-flake.one {
+      top: 37%;
+      left: 3%;
+      font-size: 1.5rem;
+    }
+
+    .snow-flake.two {
+      top: 57%;
+      right: 2%;
+      font-size: 0.95rem;
+      animation-delay: -2.1s;
+    }
+
+    .snow-flake.three {
+      top: 22%;
+      right: 8%;
+      font-size: 0.56rem;
+      animation-delay: -3.3s;
+    }
+
+    .subtitle-en {
+      margin: 8px 0 0;
+      color: #dff5fe;
+      font-size: clamp(0.76rem, 2.5vw, 0.98rem);
+      font-weight: 600;
+      letter-spacing: 0.055em;
+    }
+
+    .subtitle-es {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: clamp(0.59rem, 1.9vw, 0.7rem);
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .lobby {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .gateway {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-height: 330px;
+      padding: 0;
+      overflow: hidden;
+      isolation: isolate;
+      border: 1px solid rgba(184, 226, 244, 0.2);
+      border-radius: var(--radius);
+      background: #071d2d;
+      color: var(--ice);
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .gateway::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      z-index: 7;
+      border: 1px solid rgba(242, 207, 140, 0.24);
+      border-radius: 18px;
+      pointer-events: none;
+    }
+
+    .gateway:hover {
+      transform: translateY(-3px);
+      border-color: rgba(114, 224, 255, 0.4);
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(114, 224, 255, 0.08);
+    }
+
+    .gateway:active {
+      transform: scale(0.992);
+    }
+
+    .gateway-visual {
+      position: relative;
+      display: block;
+      flex: 1;
+      min-height: 276px;
+      overflow: hidden;
+    }
+
+    .gateway--arctic .gateway-visual {
+      background:
+        radial-gradient(90% 60% at 50% 8%, rgba(76, 161, 192, 0.26), transparent 68%),
+        radial-gradient(65% 45% at 70% 55%, rgba(104, 67, 147, 0.18), transparent 78%),
+        linear-gradient(180deg, #041525 0%, #08263a 45%, #0b3850 74%, #0d4357 100%);
+    }
+
+    .gateway--antarctic .gateway-visual {
+      background:
+        radial-gradient(60% 45% at 77% 14%, rgba(255, 226, 177, 0.58), transparent 65%),
+        radial-gradient(85% 55% at 34% 4%, rgba(91, 177, 211, 0.48), transparent 70%),
+        linear-gradient(180deg, #1a4b6c 0%, #4a87a4 34%, #96c6d4 63%, #d3e9ed 100%);
+    }
+    .aurora-band {
+      position: absolute;
+      display: block;
+      left: -24%;
+      width: 148%;
+      height: 55%;
+      border-radius: 50%;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .aurora-band.one {
+      top: -8%;
+      background: linear-gradient(90deg, transparent 8%, rgba(75, 243, 193, 0.48) 28%, rgba(89, 218, 255, 0.6) 52%, rgba(181, 141, 255, 0.4) 72%, transparent 92%);
+      clip-path: polygon(0 42%, 16% 8%, 34% 38%, 50% 5%, 66% 36%, 82% 10%, 100% 32%, 100% 62%, 79% 44%, 62% 70%, 42% 46%, 25% 72%, 0 58%);
+      filter: blur(9px);
+      opacity: 0.7;
+      animation: auroraWave 12s ease-in-out infinite alternate;
+    }
+
+    .aurora-band.two {
+      top: 5%;
+      left: -36%;
+      height: 42%;
+      background: linear-gradient(90deg, transparent, rgba(94, 255, 208, 0.3), rgba(107, 211, 255, 0.36), rgba(178, 139, 255, 0.2), transparent);
+      clip-path: polygon(0 55%, 20% 28%, 41% 58%, 62% 22%, 80% 50%, 100% 36%, 100% 74%, 77% 64%, 56% 84%, 35% 62%, 16% 86%, 0 70%);
+      filter: blur(15px);
+      opacity: 0.55;
+      animation: auroraWave 17s ease-in-out -5s infinite alternate-reverse;
+    }
+
+    .arctic-stars {
+      opacity: 0.72;
+      background-size: 165px 165px;
+      z-index: 1;
+    }
+
+    .arctic-horizon {
+      position: absolute;
+      bottom: 16%;
+      left: 0;
+      width: 100%;
+      height: 30%;
+      background:
+        linear-gradient(165deg, transparent 22%, rgba(80, 147, 171, 0.42) 22.5%, transparent 23%),
+        linear-gradient(192deg, transparent 38%, rgba(89, 160, 183, 0.34) 38.5%, transparent 39%),
+        radial-gradient(90% 130% at 42% 100%, rgba(151, 219, 232, 0.75), transparent 60%);
+      filter: blur(0.4px);
+      opacity: 0.68;
+      z-index: 1;
+    }
+
+    .holo-stage {
+      position: absolute;
+      top: 43%;
+      left: 50%;
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      width: 72%;
+      max-width: 260px;
+      height: 60%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .holo-beam {
+      position: absolute;
+      bottom: 5%;
+      left: 50%;
+      width: 92%;
+      height: 90%;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg, rgba(91, 231, 255, 0.02), rgba(91, 231, 255, 0.16));
+      clip-path: polygon(45% 0, 55% 0, 96% 100%, 4% 100%);
+      filter: blur(5px);
+      opacity: 0.8;
+      animation: holoPulse 4.5s ease-in-out infinite;
+    }
+
+    .holo-ring {
+      position: absolute;
+      bottom: 3%;
+      left: 50%;
+      width: 84%;
+      height: 19%;
+      transform: translateX(-50%);
+      border: 1px solid rgba(114, 224, 255, 0.62);
+      border-radius: 50%;
+      box-shadow: 0 0 18px rgba(114, 224, 255, 0.45), inset 0 0 18px rgba(114, 224, 255, 0.2);
+      animation: ringPulse 3.8s ease-in-out infinite;
+    }
+
+    .holo-bear {
+      position: relative;
+      z-index: 2;
+      margin-top: -2%;
+      font-size: clamp(3.8rem, 13vw, 6.4rem);
+      line-height: 1;
+      filter: brightness(0) invert(1) sepia(1) saturate(4) hue-rotate(150deg) drop-shadow(0 0 12px rgba(114, 224, 255, 0.85));
+      opacity: 0.82;
+      animation: bearFloat 6s ease-in-out infinite;
+      transform-origin: center bottom;
+    }
+
+    .holo-scan {
+      position: absolute;
+      inset: 5% 10% 7%;
+      z-index: 3;
+      background: repeating-linear-gradient(180deg, transparent 0 5px, rgba(151, 243, 255, 0.1) 6px, transparent 7px);
+      mix-blend-mode: screen;
+      opacity: 0.48;
+      animation: scanMove 3.4s linear infinite;
+      pointer-events: none;
+    }
+
+    .climate-panel {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 4;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      max-width: 74%;
+    }
+
+    .climate-chip {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 3px;
+      padding: 5px 8px;
+      border: 1px solid rgba(190, 239, 255, 0.19);
+      border-radius: 999px;
+      background: rgba(3, 17, 28, 0.48);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: var(--frost);
+      font-size: 0.48rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .climate-chip b {
+      color: #ffffff;
+      font-size: 0.63rem;
+      letter-spacing: 0.02em;
+    }
+
+    .gateway--antarctic .climate-chip {
+      border-color: rgba(20, 58, 75, 0.16);
+      background: rgba(234, 248, 250, 0.64);
+      color: #1e536a;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.56);
+    }
+
+    .gateway--antarctic .climate-chip b {
+      color: #0b3044;
+    }
+
+    .antarctic-sun {
+      position: absolute;
+      top: 11%;
+      right: 11%;
+      z-index: 1;
+      display: block;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 36%, #fffcef 0%, #ffe6ad 34%, #ffc76e 68%, rgba(255, 181, 89, 0) 72%);
+      box-shadow: 0 0 36px rgba(255, 216, 141, 0.66), 0 0 80px rgba(255, 204, 124, 0.36);
+      animation: sunGlow 6s ease-in-out infinite;
+    }
+
+    .ice-peak {
+      position: absolute;
+      bottom: 20%;
+      z-index: 1;
+      display: block;
+      filter: drop-shadow(0 10px 12px rgba(24, 79, 101, 0.15));
+    }
+
+    .ice-peak.one {
+      left: -3%;
+      width: 54%;
+      height: 32%;
+      background: linear-gradient(145deg, #e5f7fa 0%, #bfe0e7 42%, #78aebe 100%);
+      clip-path: polygon(0 100%, 38% 18%, 49% 42%, 62% 0, 100% 100%);
+      opacity: 0.92;
+    }
+
+    .ice-peak.two {
+      right: -6%;
+      width: 55%;
+      height: 24%;
+      background: linear-gradient(150deg, #eefcfd 0%, #c6e5eb 48%, #86b8c7 100%);
+      clip-path: polygon(0 100%, 28% 34%, 45% 62%, 65% 16%, 100% 100%);
+      opacity: 0.8;
+    }
+
+    .ice-platform {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      z-index: 2;
+      display: block;
+      width: 100%;
+      height: 30%;
+      background:
+        radial-gradient(80% 60% at 50% 0%, rgba(255, 255, 255, 0.9), transparent 60%),
+        linear-gradient(180deg, #e4f6f8 0%, #c4e5eb 35%, #8ebfce 100%);
+      clip-path: polygon(0 32%, 10% 22%, 25% 28%, 42% 12%, 61% 24%, 79% 17%, 100% 30%, 100% 100%, 0 100%);
+    }
+
+    .ice-platform::after {
+      content: "";
+      position: absolute;
+      inset: 32% 0 0 0;
+      background: repeating-linear-gradient(155deg, transparent 0 18px, rgba(73, 131, 151, 0.1) 19px, transparent 20px 42px);
+      opacity: 0.6;
+    }
+
+    .penguin {
+      position: absolute;
+      z-index: 3;
+      display: block;
+      line-height: 1;
+      filter: drop-shadow(0 6px 5px rgba(15, 48, 62, 0.25));
+      transform-origin: center bottom;
+      pointer-events: none;
+    }
+
+    .penguin.p1 {
+      bottom: 15%;
+      left: 13%;
+      font-size: clamp(1.8rem, 6vw, 2.9rem);
+      animation: waddle 2.8s ease-in-out infinite;
+    }
+
+    .penguin.p2 {
+      bottom: 12%;
+      left: 35%;
+      font-size: clamp(1.15rem, 4vw, 1.85rem);
+      animation: hop 3.7s ease-in-out -0.8s infinite;
+    }
+
+    .penguin.p3 {
+      bottom: 16%;
+      right: 16%;
+      font-size: clamp(1.35rem, 4.6vw, 2.2rem);
+      animation: waddle 3.4s ease-in-out -1.4s infinite reverse;
+      transform: scaleX(-1);
+    }
+
+    .pulse-point {
+      position: absolute;
+      z-index: 4;
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      border-radius: 50%;
+      background: rgba(8, 48, 64, 0.5);
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.11), 0 0 20px rgba(255, 233, 178, 0.32);
+      color: #fff;
+      font-size: 0.8rem;
+      pointer-events: none;
+    }
+
+    .pulse-point::before,
+    .pulse-point::after {
+      content: "";
+      position: absolute;
+      inset: -7px;
+      border: 1px solid rgba(255, 255, 255, 0.48);
+      border-radius: 50%;
+      animation: pulseRing 2.7s ease-out infinite;
+    }
+
+    .pulse-point::after {
+      animation-delay: 1.3s;
+    }
+
+    .pulse-point.whale {
+      top: 28%;
+      right: 12%;
+    }
+
+    .pulse-point.iceberg {
+      top: 42%;
+      left: 8%;
+    }
+
+    .pulse-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: 2;
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: rgba(4, 31, 44, 0.6);
+      color: #effcff;
+      font-size: 0.37rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      transform: translate(-50%, 75%);
+    }
+
+    .gateway-scrim {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: block;
+      background:
+        linear-gradient(180deg, rgba(3, 15, 25, 0.03) 25%, rgba(3, 15, 25, 0.12) 48%, rgba(3, 15, 25, 0.88) 100%),
+        linear-gradient(90deg, rgba(3, 15, 25, 0.16), transparent 32%, transparent 70%, rgba(3, 15, 25, 0.12));
+      pointer-events: none;
+    }
+
+    .gateway--antarctic .gateway-scrim {
+      background: linear-gradient(180deg, rgba(4, 20, 31, 0.02) 20%, rgba(4, 20, 31, 0.11) 46%, rgba(3, 18, 28, 0.9) 100%);
+    }
+
+    .gateway-copy {
+      position: absolute;
+      right: 15px;
+      bottom: 15px;
+      left: 15px;
+      z-index: 6;
+      display: block;
+    }
+
+    .station-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 7px;
+      color: var(--gold);
+      font-size: 0.48rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .station-tag .dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 8px rgba(242, 207, 140, 0.8);
+    }
+
+    .gateway-name {
+      display: block;
+      font-family: var(--font-display);
+      font-size: clamp(1.18rem, 4.5vw, 2.55rem);
+      font-weight: 700;
+      letter-spacing: 0.025em;
+      line-height: 0.96;
+      text-shadow: 0 4px 18px rgba(0, 0, 0, 0.65);
+    }
+
+    .gateway-name span {
+      display: block;
+      margin-top: 5px;
+      color: #c7ebf7;
+      font-family: var(--font-body);
+      font-size: 0.52em;
+      font-weight: 800;
+      letter-spacing: 0.22em;
+    }
+
+    .gateway-es {
+      display: block;
+      margin-top: 6px;
+      color: rgba(225, 246, 255, 0.6);
+      font-size: clamp(0.46rem, 1.7vw, 0.58rem);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .gateway-footer {
+      position: relative;
+      z-index: 8;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 50px;
+      padding: 9px 13px;
+      border-top: 1px solid rgba(184, 226, 244, 0.12);
+      background: linear-gradient(90deg, #071b2a, #0b293c);
+    }
+
+    .gateway--antarctic .gateway-footer {
+      background: linear-gradient(90deg, #071b2a, #0d2d40 55%, #122f3e);
+    }
+
+    .gateway-foot-meta {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 0.49rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .gateway-foot-meta .spark {
+      color: var(--gold);
+      font-size: 0.6rem;
+    }
+
+    .enter-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #f9e5b4, var(--gold));
+      box-shadow: 0 4px 14px rgba(242, 207, 140, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      color: #241706;
+      font-size: 0.52rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .gateway:hover .enter-pill {
+      transform: translateX(2px);
+      box-shadow: 0 6px 18px rgba(242, 207, 140, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .enter-pill svg {
+      width: 10px;
+      height: 10px;
+    }
+    .console {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      grid-column: 1 / -1;
+      order: -1;
+      min-height: 0;
+      padding: 19px 17px 17px;
+      overflow: hidden;
+      border: 1px solid rgba(184, 226, 244, 0.19);
+      border-radius: var(--radius);
+      background:
+        radial-gradient(100% 55% at 50% 0%, rgba(54, 126, 158, 0.17), transparent 64%),
+        linear-gradient(160deg, rgba(12, 42, 63, 0.98), rgba(6, 24, 38, 0.99));
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .console::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 8%;
+      width: 84%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(242, 207, 140, 0.75), transparent);
+    }
+
+    .console::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      background:
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 7px),
+        linear-gradient(180deg, #4b2d1c, #2b180d);
+      opacity: 0.9;
+    }
+
+    .console-head {
+      position: relative;
+      margin-bottom: 13px;
+      text-align: center;
+    }
+
+    .console-head .eyebrow {
+      font-size: 0.47rem;
+    }
+
+    .console-head h2 {
+      margin: 5px 0 1px;
+      font-family: var(--font-display);
+      font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+    }
+
+    .console-head .console-es {
+      color: var(--muted);
+      font-size: 0.52rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .console-head-trophy {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 1px solid rgba(242, 207, 140, 0.29);
+      border-radius: 10px;
+      background: rgba(242, 207, 140, 0.08);
+      color: var(--gold);
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .console-head-trophy:hover {
+      background: rgba(242, 207, 140, 0.15);
+      border-color: rgba(242, 207, 140, 0.48);
+    }
+
+    .console-head-trophy:active {
+      transform: scale(0.94);
+    }
+
+    .explorer-row {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 10px;
+      border: 1px solid rgba(184, 226, 244, 0.11);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.032);
+    }
+
+    .avatar-wrap {
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 50px;
+      height: 50px;
+      border: 1px solid rgba(169, 236, 255, 0.45);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(179, 244, 255, 0.3), transparent 48%),
+        linear-gradient(145deg, #124764, #082133 70%);
+      box-shadow: 0 0 0 4px rgba(114, 224, 255, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      color: #f2fcff;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .level-chip {
+      position: absolute;
+      right: -5px;
+      bottom: -3px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 29px;
+      height: 17px;
+      padding: 0 6px;
+      border: 1px solid rgba(242, 207, 140, 0.4);
+      border-radius: 999px;
+      background: #17202a;
+      color: var(--gold);
+      font-size: 0.43rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .explorer-copy {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .explorer-copy .welcome {
+      color: var(--muted);
+      font-size: 0.53rem;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .explorer-name {
+      display: block;
+      overflow: hidden;
+      margin-top: 1px;
+      color: #f4fcff;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .explorer-rank {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 2px;
+      color: var(--cyan-soft);
+      font-size: 0.57rem;
+      font-weight: 600;
+    }
+
+    .explorer-rank::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 8px rgba(114, 224, 255, 0.75);
+    }
+
+    .edit-name {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      flex: 0 0 auto;
+      padding: 0;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .edit-name:hover {
+      border-color: var(--line);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--ice);
+    }
+
+    .edit-name svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .xp-block {
+      margin-top: 13px;
+    }
+
+    .xp-topline {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .xp-label {
+      color: var(--gold);
+      font-size: 0.49rem;
+      font-weight: 800;
+      letter-spacing: 0.17em;
+      text-transform: uppercase;
+    }
+
+    .xp-value {
+      color: var(--frost);
+      font-size: 0.55rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .xp-value strong {
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .xp-track {
+      position: relative;
+      height: 9px;
+      overflow: hidden;
+      border: 1px solid rgba(184, 226, 244, 0.12);
+      border-radius: 999px;
+      background: rgba(2, 12, 20, 0.56);
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.26);
+    }
+
+    .xp-fill {
+      position: relative;
+      width: 0;
+      height: 100%;
+      overflow: hidden;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #4bc8e7, #8aeaff 52%, #f4d79b);
+      box-shadow: 0 0 12px rgba(114, 224, 255, 0.48);
+      transition: width 0.75s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .xp-fill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 15%, rgba(255, 255, 255, 0.55) 44%, transparent 68%);
+      transform: translateX(-110%);
+      animation: xpShine 2.8s ease-in-out 1.4s infinite;
+    }
+
+    .xp-next {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    .xp-next b {
+      color: var(--cyan-soft);
+      font-weight: 800;
+    }
+
+    .xp-next em {
+      color: var(--gold);
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    .mission-list {
+      display: grid;
+      gap: 7px;
+      margin-top: 13px;
+    }
+
+    .mission-row {
+      display: grid;
+      grid-template-columns: 31px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      width: 100%;
+      padding: 8px 9px;
+      border: 1px solid rgba(184, 226, 244, 0.1);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.028);
+      color: var(--ice);
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .mission-row:hover {
+      border-color: rgba(114, 224, 255, 0.32);
+      background: rgba(114, 224, 255, 0.055);
+    }
+
+    .mission-row:active {
+      transform: scale(0.994);
+    }
+
+    .mission-icon {
+      display: grid;
+      place-items: center;
+      width: 31px;
+      height: 31px;
+      border: 1px solid rgba(114, 224, 255, 0.18);
+      border-radius: 9px;
+      background: rgba(114, 224, 255, 0.07);
+      font-size: 0.86rem;
+    }
+
+    .mission-row[data-branch="antarctic"] .mission-icon {
+      border-color: rgba(242, 207, 140, 0.18);
+      background: rgba(242, 207, 140, 0.08);
+    }
+
+    .mission-copy {
+      min-width: 0;
+    }
+
+    .mission-name {
+      display: block;
+      overflow: hidden;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mission-status {
+      display: block;
+      overflow: hidden;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.48rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mission-row.is-complete .mission-status {
+      color: var(--success);
+    }
+
+    .mission-pips {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
+
+    .mission-pips i {
+      display: block;
+      width: 3px;
+      height: 12px;
+      border-radius: 2px;
+      background: rgba(184, 226, 244, 0.15);
+    }
+
+    .mission-pips i.on {
+      background: var(--cyan);
+      box-shadow: 0 0 6px rgba(114, 224, 255, 0.42);
+    }
+
+    .mission-row[data-branch="antarctic"] .mission-pips i.on {
+      background: var(--gold);
+      box-shadow: 0 0 6px rgba(242, 207, 140, 0.4);
+    }
+
+    .badge-shelf {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 11px;
+    }
+
+    .badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 7px 3px;
+      border: 1px solid rgba(184, 226, 244, 0.08);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.018);
+      color: var(--muted);
+      text-align: center;
+      transition: opacity 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .badge .badge-icon {
+      font-size: 0.8rem;
+      line-height: 1;
+      filter: grayscale(1);
+      opacity: 0.42;
+    }
+
+    .badge span:last-child {
+      font-size: 0.4rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .badge.is-unlocked {
+      border-color: rgba(242, 207, 140, 0.22);
+      background: rgba(242, 207, 140, 0.055);
+      color: var(--gold);
+    }
+
+    .badge.is-unlocked .badge-icon {
+      filter: none;
+      opacity: 1;
+    }
+
+    .console-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 9px;
+      margin-top: 11px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(184, 226, 244, 0.08);
+    }
+
+    .autosave {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 0.43rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .autosave::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 7px rgba(127, 240, 193, 0.72);
+      animation: savePulse 2.4s ease-in-out infinite;
+    }
+
+    .text-link {
+      padding: 2px 0;
+      border: 0;
+      background: transparent;
+      color: var(--gold);
+      font-size: 0.47rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .text-link:hover {
+      color: #ffe5b3;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .pillars-section {
+      padding: 22px 2px 28px;
+    }
+
+    .pillars-heading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 0.46rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .pillars-heading b {
+      color: var(--gold);
+      font-weight: 800;
+    }
+
+    .pillars-heading span + span::before {
+      content: "·";
+      margin-right: 8px;
+      color: var(--gold-deep);
+    }
+
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .pillar {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+      padding: 12px 10px;
+      overflow: hidden;
+      border: 1px solid rgba(184, 226, 244, 0.12);
+      border-radius: 14px;
+      background:
+        linear-gradient(140deg, rgba(255, 255, 255, 0.045), transparent 54%),
+        rgba(8, 30, 47, 0.72);
+      color: var(--ice);
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+    }
+
+    .pillar::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 10%;
+      width: 80%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(242, 207, 140, 0.5), transparent);
+    }
+
+    .pillar:hover {
+      transform: translateY(-2px);
+      border-color: rgba(242, 207, 140, 0.32);
+      background:
+        linear-gradient(140deg, rgba(242, 207, 140, 0.08), transparent 54%),
+        rgba(10, 38, 58, 0.88);
+    }
+
+    .pillar:active {
+      transform: scale(0.985);
+    }
+
+    .pillar-icon {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(114, 224, 255, 0.18);
+      border-radius: 10px;
+      background: rgba(114, 224, 255, 0.07);
+      color: var(--cyan-soft);
+    }
+
+    .pillar-icon svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .pillar-copy {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .pillar-copy strong {
+      display: block;
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+    }
+
+    .pillar-copy small {
+      display: block;
+      overflow: hidden;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.43rem;
+      letter-spacing: 0.02em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pillar-arrow {
+      flex: 0 0 auto;
+      color: var(--gold);
+      font-size: 0.64rem;
+    }
+
+    .site-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 0 4px calc(19px + env(safe-area-inset-bottom));
+      color: rgba(184, 226, 244, 0.45);
+      font-size: 0.45rem;
+      letter-spacing: 0.09em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .site-footer span:first-child {
+      color: rgba(242, 207, 140, 0.58);
+    }
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      place-items: center;
+      padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+    }
+
+    .modal.is-open {
+      display: grid;
+    }
+
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(2, 9, 16, 0.76);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      animation: fadeIn 0.25s ease both;
+    }
+
+    .modal-panel {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-height: calc(100dvh - 24px);
+      overflow: auto;
+      border: 1px solid rgba(184, 226, 244, 0.22);
+      border-radius: 24px;
+      background:
+        radial-gradient(90% 45% at 50% 0%, rgba(61, 137, 169, 0.16), transparent 66%),
+        linear-gradient(160deg, #0b2a40 0%, #071c2d 62%, #061724 100%);
+      box-shadow: 0 34px 100px rgba(0, 0, 0, 0.66), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      animation: modalIn 0.34s cubic-bezier(0.18, 0.85, 0.28, 1.08) both;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(114, 224, 255, 0.35) transparent;
+    }
+
+    .modal-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .modal-panel::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: rgba(114, 224, 255, 0.32);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 4;
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border: 1px solid rgba(184, 226, 244, 0.18);
+      border-radius: 11px;
+      background: rgba(3, 15, 25, 0.5);
+      color: var(--frost);
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .modal-close:hover {
+      border-color: rgba(242, 207, 140, 0.42);
+      background: rgba(242, 207, 140, 0.1);
+    }
+
+    .modal-close:active {
+      transform: scale(0.94);
+    }
+
+    .modal-close svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .name-panel {
+      max-width: 430px;
+      padding: 28px 22px 23px;
+      text-align: center;
+    }
+
+    .onboard-emblem {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 15px;
+      border: 1px solid rgba(242, 207, 140, 0.34);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 45% 38%, rgba(211, 248, 255, 0.2), transparent 42%),
+        linear-gradient(145deg, rgba(20, 65, 90, 0.9), rgba(5, 22, 36, 0.98));
+      box-shadow: 0 0 0 8px rgba(114, 224, 255, 0.035), 0 18px 42px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    }
+
+    .onboard-emblem::before,
+    .onboard-emblem::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(114, 224, 255, 0.22);
+      border-radius: 50%;
+      animation: orbit 12s linear infinite;
+    }
+
+    .onboard-emblem::before {
+      inset: -8px;
+      border-style: dashed;
+    }
+
+    .onboard-emblem::after {
+      inset: 12px;
+      border-color: rgba(242, 207, 140, 0.2);
+      animation-direction: reverse;
+      animation-duration: 9s;
+    }
+
+    .onboard-emblem .big-flake {
+      color: #e5faff;
+      font-size: 2.8rem;
+      line-height: 1;
+      text-shadow: 0 0 20px rgba(114, 224, 255, 0.68), 0 0 48px rgba(114, 224, 255, 0.26);
+      animation: flakeFloat 4.5s ease-in-out infinite;
+    }
+
+    .name-panel h2 {
+      margin: 7px 0 2px;
+      font-family: var(--font-display);
+      font-size: clamp(1.35rem, 5vw, 1.85rem);
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .name-es {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.56rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .name-copy {
+      max-width: 320px;
+      margin: 12px auto 16px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      line-height: 1.65;
+    }
+
+    .name-form {
+      display: grid;
+      gap: 9px;
+    }
+
+    .name-form label {
+      color: var(--frost);
+      font-size: 0.51rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-align: left;
+      text-transform: uppercase;
+    }
+
+    .name-input {
+      width: 100%;
+      height: 51px;
+      padding: 0 16px;
+      border: 1px solid rgba(184, 226, 244, 0.22);
+      border-radius: 14px;
+      background: rgba(2, 13, 22, 0.55);
+      box-shadow: inset 0 2px 7px rgba(0, 0, 0, 0.24), 0 0 0 0 rgba(114, 224, 255, 0);
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .name-input::placeholder {
+      color: rgba(184, 226, 244, 0.32);
+      font-weight: 500;
+    }
+
+    .name-input:focus {
+      border-color: rgba(114, 224, 255, 0.65);
+      box-shadow: inset 0 2px 7px rgba(0, 0, 0, 0.24), 0 0 0 4px rgba(114, 224, 255, 0.08);
+      outline: none;
+    }
+
+    .input-error {
+      min-height: 13px;
+      margin: 0;
+      color: var(--danger);
+      font-size: 0.6rem;
+      text-align: left;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .ghost-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 13px;
+      font-size: 0.63rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-align: center;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .primary-btn {
+      border: 1px solid rgba(255, 255, 255, 0.36);
+      background: linear-gradient(135deg, #f8e3b0, var(--gold) 58%, #d7af69);
+      box-shadow: 0 10px 26px rgba(242, 207, 140, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+      color: #251705;
+    }
+
+    .primary-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(242, 207, 140, 0.23), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    }
+
+    .primary-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.38;
+      transform: none;
+    }
+
+    .secondary-btn {
+      border: 1px solid rgba(114, 224, 255, 0.3);
+      background: rgba(114, 224, 255, 0.09);
+      color: var(--cyan-soft);
+    }
+
+    .secondary-btn:hover {
+      border-color: rgba(114, 224, 255, 0.52);
+      background: rgba(114, 224, 255, 0.14);
+    }
+
+    .ghost-btn {
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .ghost-btn:hover {
+      border-color: rgba(184, 226, 244, 0.32);
+      color: var(--ice);
+    }
+
+    .primary-btn:active,
+    .secondary-btn:active,
+    .ghost-btn:active {
+      transform: scale(0.985);
+    }
+
+    .privacy-note {
+      margin: 14px 0 0;
+      color: rgba(184, 226, 244, 0.44);
+      font-size: 0.52rem;
+      line-height: 1.5;
+    }
+
+    .mission-panel {
+      --mission-accent: #72e0ff;
+      --mission-accent-rgb: 114, 224, 255;
+      max-width: 710px;
+      padding: 24px 19px 19px;
+    }
+
+    .mission-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding-right: 40px;
+    }
+
+    .mission-emblem {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(var(--mission-accent-rgb), 0.42);
+      border-radius: 14px;
+      background: rgba(var(--mission-accent-rgb), 0.09);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      font-size: 1.45rem;
+    }
+
+    .mission-kicker {
+      display: block;
+      color: var(--mission-accent);
+      font-size: 0.49rem;
+      font-weight: 800;
+      letter-spacing: 0.17em;
+      text-transform: uppercase;
+    }
+
+    .mission-head h2 {
+      margin: 3px 0 2px;
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 4.4vw, 1.65rem);
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .mission-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.61rem;
+      line-height: 1.5;
+    }
+
+    .mission-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 16px 0 10px;
+      color: var(--muted);
+      font-size: 0.48rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .mission-meta strong {
+      color: var(--ice);
+      font-size: 0.7rem;
+    }
+
+    .q-dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .q-dot {
+      display: block;
+      width: 18px;
+      height: 4px;
+      border-radius: 99px;
+      background: rgba(184, 226, 244, 0.14);
+      transition: width 0.3s ease, background 0.3s ease;
+    }
+
+    .q-dot.is-current {
+      width: 25px;
+      background: var(--mission-accent);
+      box-shadow: 0 0 9px rgba(var(--mission-accent-rgb), 0.48);
+    }
+
+    .q-dot.is-done {
+      background: rgba(127, 240, 193, 0.64);
+    }
+
+    .mission-score {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--gold);
+    }
+
+    .mission-score svg {
+      width: 11px;
+      height: 11px;
+    }
+
+    .question-card {
+      position: relative;
+      padding: 17px 14px;
+      border: 1px solid rgba(184, 226, 244, 0.13);
+      border-radius: 17px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.035), transparent 46%),
+        rgba(2, 14, 24, 0.34);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .question-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 11px;
+    }
+
+    .q-type {
+      color: var(--mission-accent);
+      font-size: 0.45rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .listen-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      min-height: 27px;
+      padding: 0 9px;
+      border: 1px solid rgba(184, 226, 244, 0.16);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--frost);
+      font-size: 0.47rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .listen-btn:hover {
+      border-color: rgba(114, 224, 255, 0.4);
+      background: rgba(114, 224, 255, 0.08);
+    }
+
+    .listen-btn svg {
+      width: 11px;
+      height: 11px;
+    }
+
+    .q-prompt,
+    .sentence {
+      margin: 0;
+      color: #f3fcff;
+      font-size: clamp(1.05rem, 4.1vw, 1.33rem);
+      font-weight: 700;
+      line-height: 1.42;
+      letter-spacing: -0.01em;
+    }
+
+    .sentence {
+      font-weight: 600;
+    }
+
+    .blank-word {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 88px;
+      min-height: 31px;
+      margin: 0 3px;
+      padding: 0 9px;
+      border-bottom: 2px solid rgba(114, 224, 255, 0.54);
+      border-radius: 5px 5px 0 0;
+      background: rgba(114, 224, 255, 0.065);
+      color: var(--cyan-soft);
+      font-size: 0.9em;
+      vertical-align: baseline;
+    }
+
+    .blank-word.is-filled {
+      border-bottom-color: var(--gold);
+      background: rgba(242, 207, 140, 0.08);
+      color: var(--gold);
+    }
+
+    .blank-word.is-correct {
+      border-bottom-color: var(--success);
+      background: rgba(127, 240, 193, 0.1);
+      color: var(--success);
+    }
+
+    .blank-word.is-wrong {
+      border-bottom-color: var(--danger);
+      background: rgba(255, 140, 154, 0.1);
+      color: var(--danger);
+    }
+
+    .q-hint {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.58rem;
+      line-height: 1.55;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 7px;
+      margin-top: 15px;
+    }
+
+    .option-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 46px;
+      padding: 9px 11px;
+      border: 1px solid rgba(184, 226, 244, 0.14);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.034);
+      color: var(--ice);
+      font-family: inherit;
+      font-size: 0.73rem;
+      font-weight: 600;
+      line-height: 1.3;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: rgba(114, 224, 255, 0.4);
+      background: rgba(114, 224, 255, 0.065);
+      transform: translateX(2px);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-letter {
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(184, 226, 244, 0.16);
+      border-radius: 7px;
+      background: rgba(3, 16, 26, 0.42);
+      color: var(--muted);
+      font-size: 0.52rem;
+      font-weight: 800;
+    }
+
+    .option-btn.is-correct {
+      border-color: rgba(127, 240, 193, 0.72);
+      background: rgba(66, 191, 142, 0.14);
+      color: #dcfff2;
+      box-shadow: 0 0 0 1px rgba(127, 240, 193, 0.12), 0 0 22px rgba(127, 240, 193, 0.08);
+    }
+
+    .option-btn.is-correct .option-letter {
+      border-color: rgba(127, 240, 193, 0.5);
+      background: rgba(127, 240, 193, 0.15);
+      color: var(--success);
+    }
+
+    .option-btn.is-wrong {
+      border-color: rgba(255, 140, 154, 0.68);
+      background: rgba(255, 140, 154, 0.11);
+      color: #ffe4e7;
+    }
+
+    .option-btn.is-wrong .option-letter {
+      border-color: rgba(255, 140, 154, 0.5);
+      background: rgba(255, 140, 154, 0.12);
+      color: var(--danger);
+    }
+
+    .word-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 15px;
+    }
+
+    .word-chip {
+      min-height: 37px;
+      padding: 0 14px;
+      border: 1px solid rgba(184, 226, 244, 0.18);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.045);
+      color: var(--ice);
+      font-family: inherit;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .word-chip:hover:not(:disabled) {
+      border-color: rgba(114, 224, 255, 0.42);
+      background: rgba(114, 224, 255, 0.09);
+    }
+
+    .word-chip.is-selected {
+      border-color: rgba(242, 207, 140, 0.68);
+      background: rgba(242, 207, 140, 0.11);
+      color: var(--gold);
+    }
+
+    .word-chip.is-correct {
+      border-color: rgba(127, 240, 193, 0.65);
+      background: rgba(127, 240, 193, 0.12);
+      color: var(--success);
+    }
+
+    .word-chip.is-wrong {
+      border-color: rgba(255, 140, 154, 0.58);
+      background: rgba(255, 140, 154, 0.1);
+      color: var(--danger);
+    }
+
+    .word-chip:disabled {
+      cursor: default;
+    }
+
+    .fill-check-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 11px;
+      padding: 10px 12px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      font-size: 0.64rem;
+      line-height: 1.55;
+      animation: feedbackIn 0.3s ease both;
+    }
+
+    .feedback.is-visible {
+      display: block;
+    }
+
+    .feedback.is-correct {
+      border-color: rgba(127, 240, 193, 0.27);
+      background: rgba(66, 191, 142, 0.1);
+      color: #d8fff1;
+    }
+
+    .feedback.is-wrong {
+      border-color: rgba(255, 140, 154, 0.25);
+      background: rgba(255, 140, 154, 0.08);
+      color: #ffe5e8;
+    }
+
+    .feedback strong {
+      font-weight: 800;
+    }
+
+    .feedback .feedback-es {
+      display: block;
+      margin-top: 3px;
+      color: rgba(231, 248, 255, 0.66);
+      font-size: 0.56rem;
+    }
+
+    .feedback .feedback-xp {
+      display: inline-flex;
+      margin-left: 4px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(127, 240, 193, 0.16);
+      color: var(--success);
+      font-size: 0.52rem;
+      font-weight: 800;
+      vertical-align: 1px;
+    }
+
+    .mission-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 13px;
+    }
+
+    .mission-actions .primary-btn {
+      margin-left: auto;
+    }
+
+    .shake {
+      animation: shake 0.38s ease both;
+    }
+    .result-wrap {
+      padding: 4px 1px 1px;
+      text-align: center;
+    }
+
+    .result-emblem {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 82px;
+      height: 82px;
+      margin: 1px auto 12px;
+      border: 1px solid rgba(242, 207, 140, 0.44);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 46% 35%, rgba(239, 253, 255, 0.18), transparent 42%),
+        linear-gradient(145deg, rgba(23, 75, 101, 0.9), rgba(5, 22, 35, 0.98));
+      box-shadow: 0 0 0 8px rgba(242, 207, 140, 0.035), 0 18px 40px rgba(0, 0, 0, 0.35);
+      font-size: 2.5rem;
+      animation: resultPop 0.6s cubic-bezier(0.18, 0.9, 0.24, 1.2) both;
+    }
+
+    .result-emblem::after {
+      content: "";
+      position: absolute;
+      inset: -12px;
+      border: 1px dashed rgba(114, 224, 255, 0.22);
+      border-radius: 50%;
+      animation: orbit 16s linear infinite;
+    }
+
+    .result-wrap .eyebrow {
+      font-size: 0.46rem;
+    }
+
+    .result-wrap h2 {
+      margin: 8px 0 4px;
+      font-family: var(--font-display);
+      font-size: clamp(1.55rem, 5.4vw, 2.1rem);
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .result-es {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .result-message {
+      max-width: 440px;
+      margin: 12px auto 0;
+      color: var(--muted);
+      font-size: 0.72rem;
+      line-height: 1.65;
+    }
+
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      max-width: 430px;
+      margin: 16px auto 0;
+    }
+
+    .result-stat {
+      padding: 11px 5px;
+      border: 1px solid rgba(184, 226, 244, 0.12);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .result-stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.43rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .result-stat strong {
+      display: block;
+      margin-top: 3px;
+      color: var(--ice);
+      font-family: var(--font-display);
+      font-size: 1.06rem;
+      font-weight: 600;
+    }
+
+    .result-stat.highlight {
+      border-color: rgba(242, 207, 140, 0.26);
+      background: rgba(242, 207, 140, 0.06);
+    }
+
+    .result-stat.highlight strong {
+      color: var(--gold);
+    }
+
+    .result-bonus {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 11px;
+      padding: 4px 10px;
+      border: 1px solid rgba(127, 240, 193, 0.2);
+      border-radius: 999px;
+      background: rgba(127, 240, 193, 0.07);
+      color: var(--success);
+      font-size: 0.53rem;
+      font-weight: 700;
+    }
+
+    .result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 17px;
+    }
+
+    .result-actions button {
+      flex: 1 1 150px;
+    }
+
+    .leaderboard-panel {
+      max-width: 560px;
+      padding: 24px 16px 19px;
+    }
+
+    .hall-head {
+      padding: 0 36px;
+      text-align: center;
+    }
+
+    .hall-head .trophy-big {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 2rem;
+      filter: drop-shadow(0 5px 12px rgba(242, 207, 140, 0.25));
+      animation: floatSoft 5s ease-in-out infinite;
+    }
+
+    .hall-head h2 {
+      margin: 5px 0 2px;
+      font-family: var(--font-display);
+      font-size: clamp(1.45rem, 5vw, 1.9rem);
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .hall-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.56rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .podium {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: end;
+      gap: 6px;
+      margin-top: 19px;
+      padding: 0 2px;
+    }
+
+    .podium-place {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .podium-place.is-user .podium-avatar {
+      border-color: rgba(114, 224, 255, 0.75);
+      box-shadow: 0 0 0 4px rgba(114, 224, 255, 0.09), 0 0 22px rgba(114, 224, 255, 0.2);
+    }
+
+    .podium-place.is-user .podium-name {
+      color: var(--cyan-soft);
+    }
+
+    .podium-avatar {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      margin-bottom: 4px;
+      border: 1px solid rgba(184, 226, 244, 0.28);
+      border-radius: 50%;
+      background: linear-gradient(145deg, #154863, #071d2e);
+      color: var(--ice);
+      font-family: var(--font-display);
+      font-size: 1.08rem;
+      font-weight: 700;
+      box-shadow: 0 7px 18px rgba(0, 0, 0, 0.3);
+    }
+
+    .place-1 .podium-avatar {
+      width: 58px;
+      height: 58px;
+      border-color: rgba(242, 207, 140, 0.7);
+      background: linear-gradient(145deg, #6d5124, #172c3d);
+      color: #fff3cd;
+      box-shadow: 0 0 0 4px rgba(242, 207, 140, 0.08), 0 10px 24px rgba(0, 0, 0, 0.32);
+    }
+
+    .podium-medal {
+      font-size: 0.95rem;
+      line-height: 1;
+    }
+
+    .place-1 .podium-medal {
+      font-size: 1.2rem;
+    }
+
+    .podium-name {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      margin-top: 2px;
+      color: var(--ice);
+      font-size: 0.59rem;
+      font-weight: 800;
+      line-height: 1.35;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .podium-xp {
+      display: block;
+      margin-top: 1px;
+      color: var(--gold);
+      font-size: 0.48rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .podium-youtag {
+      display: inline-block;
+      margin-left: 3px;
+      padding: 1px 4px;
+      border-radius: 99px;
+      background: rgba(114, 224, 255, 0.14);
+      color: var(--cyan-soft);
+      font-size: 0.34rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      vertical-align: 1px;
+    }
+
+    .podium-block {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      width: 100%;
+      margin-top: 5px;
+      padding-top: 7px;
+      border: 1px solid rgba(184, 226, 244, 0.12);
+      border-bottom: 0;
+      border-radius: 10px 10px 0 0;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent),
+        rgba(255, 255, 255, 0.025);
+      color: rgba(184, 226, 244, 0.4);
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+    }
+
+    .place-1 .podium-block {
+      height: 82px;
+      border-color: rgba(242, 207, 140, 0.3);
+      background:
+        linear-gradient(180deg, rgba(242, 207, 140, 0.16), transparent 62%),
+        rgba(242, 207, 140, 0.045);
+      color: var(--gold);
+      box-shadow: 0 -1px 22px rgba(242, 207, 140, 0.08);
+    }
+
+    .place-2 .podium-block {
+      height: 62px;
+    }
+
+    .place-3 .podium-block {
+      height: 48px;
+    }
+
+    .podium-floor {
+      height: 2px;
+      margin: 0 2px;
+      background: linear-gradient(90deg, transparent, rgba(242, 207, 140, 0.52), transparent);
+    }
+
+    .ranking-list {
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .ranking-row {
+      display: grid;
+      grid-template-columns: 25px 29px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      min-height: 42px;
+      padding: 5px 7px;
+      border-bottom: 1px solid rgba(184, 226, 244, 0.07);
+      color: var(--ice);
+    }
+
+    .ranking-row:last-child {
+      border-bottom: 0;
+    }
+
+    .ranking-row.is-user {
+      border: 1px solid rgba(114, 224, 255, 0.22);
+      border-radius: 10px;
+      background: rgba(114, 224, 255, 0.055);
+    }
+
+    .ranking-position {
+      color: var(--muted);
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      text-align: center;
+    }
+
+    .ranking-avatar {
+      display: grid;
+      place-items: center;
+      width: 27px;
+      height: 27px;
+      border: 1px solid rgba(184, 226, 244, 0.15);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      font-size: 0.62rem;
+      font-weight: 800;
+    }
+
+    .ranking-name {
+      overflow: hidden;
+      font-size: 0.63rem;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ranking-name .podium-youtag {
+      margin-left: 5px;
+    }
+
+    .ranking-xp {
+      color: var(--gold);
+      font-size: 0.58rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .hall-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 9px;
+      margin-top: 13px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(184, 226, 244, 0.09);
+      color: var(--muted);
+      font-size: 0.48rem;
+      line-height: 1.45;
+    }
+
+    .hall-footer b {
+      color: var(--gold);
+    }
+
+    .hall-footer .primary-btn {
+      min-height: 37px;
+      padding: 0 14px;
+      flex: 0 0 auto;
+      font-size: 0.52rem;
+    }
+
+    .pillar-panel {
+      max-width: 480px;
+      padding: 25px 20px 20px;
+    }
+
+    .pillar-detail-icon {
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      margin-bottom: 13px;
+      border: 1px solid rgba(114, 224, 255, 0.28);
+      border-radius: 17px;
+      background:
+        linear-gradient(145deg, rgba(114, 224, 255, 0.14), transparent),
+        rgba(5, 22, 36, 0.8);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 12px 28px rgba(0, 0, 0, 0.24);
+      color: var(--cyan-soft);
+    }
+
+    .pillar-detail-icon svg {
+      width: 27px;
+      height: 27px;
+    }
+
+    .pillar-panel h2 {
+      margin: 5px 0 1px;
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 5vw, 1.8rem);
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .pillar-panel .pillar-es {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.53rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .pillar-panel .pillar-description {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 0.71rem;
+      line-height: 1.65;
+    }
+
+    .pillar-panel .pillar-description-es {
+      margin: 4px 0 0;
+      color: rgba(184, 226, 244, 0.48);
+      font-size: 0.61rem;
+      line-height: 1.55;
+    }
+
+    .word-card {
+      margin-top: 15px;
+      padding: 12px 13px;
+      border: 1px solid rgba(242, 207, 140, 0.2);
+      border-radius: 13px;
+      background:
+        linear-gradient(140deg, rgba(242, 207, 140, 0.08), transparent),
+        rgba(255, 255, 255, 0.02);
+    }
+
+    .word-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.42rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .word-card strong {
+      display: block;
+      margin-top: 3px;
+      color: var(--gold);
+      font-family: var(--font-display);
+      font-size: 1.17rem;
+      font-weight: 600;
+    }
+
+    .word-card small {
+      display: block;
+      margin-top: 1px;
+      color: var(--frost);
+      font-size: 0.57rem;
+    }
+
+    .phrase-line {
+      margin: 11px 0 0;
+      color: #dff8ff;
+      font-size: 0.76rem;
+      font-style: italic;
+      line-height: 1.55;
+    }
+
+    .pillar-audio-actions {
+      display: flex;
+      gap: 7px;
+      margin-top: 15px;
+    }
+
+    .pillar-audio-actions button {
+      flex: 1;
+      min-height: 40px;
+    }
+
+    .toast-wrap {
+      position: fixed;
+      right: 12px;
+      bottom: calc(14px + env(safe-area-inset-bottom));
+      left: 12px;
+      z-index: 220;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      pointer-events: none;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 390px;
+      padding: 10px 14px;
+      border: 1px solid rgba(242, 207, 140, 0.34);
+      border-radius: 12px;
+      background: rgba(5, 23, 37, 0.96);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.46), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--ice);
+      font-size: 0.64rem;
+      font-weight: 600;
+      line-height: 1.4;
+      text-align: left;
+      pointer-events: auto;
+      animation: toastIn 0.35s cubic-bezier(0.18, 0.85, 0.28, 1.08) both;
+    }
+
+    .toast.is-leaving {
+      animation: toastOut 0.28s ease both;
+    }
+
+    .toast .toast-icon {
+      display: grid;
+      place-items: center;
+      width: 25px;
+      height: 25px;
+      flex: 0 0 auto;
+      border-radius: 8px;
+      background: rgba(242, 207, 140, 0.12);
+      color: var(--gold);
+      font-size: 0.8rem;
+    }
+
+    .fx-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 230;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .fx-particle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
+    @keyframes ambientDrift {
+      0% { transform: translate3d(-3%, 0, 0) rotate(-8deg) skewY(-5deg); }
+      100% { transform: translate3d(9%, 5%, 0) rotate(-3deg) skewY(-2deg); }
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.28; }
+      50% { opacity: 0.6; }
+      100% { opacity: 0.35; }
+    }
+
+    @keyframes snowFall {
+      0% { transform: translate3d(0, -8vh, 0) rotate(0deg); }
+      100% { transform: translate3d(var(--drift, 20px), 112vh, 0) rotate(300deg); }
+    }
+
+    @keyframes auroraWave {
+      0% { transform: translate3d(-3%, -2%, 0) rotate(-2deg) scaleY(0.92); opacity: 0.46; }
+      50% { opacity: 0.72; }
+      100% { transform: translate3d(4%, 4%, 0) rotate(2deg) scaleY(1.08); opacity: 0.52; }
+    }
+
+    @keyframes holoPulse {
+      0%, 100% { opacity: 0.55; }
+      50% { opacity: 0.9; }
+    }
+
+    @keyframes ringPulse {
+      0%, 100% { opacity: 0.45; transform: translateX(-50%) scale(0.96); }
+      50% { opacity: 0.85; transform: translateX(-50%) scale(1.04); }
+    }
+
+    @keyframes bearFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-5px) scale(1.018); }
+    }
+
+    @keyframes scanMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 20px; }
+    }
+
+    @keyframes sunGlow {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.06); opacity: 1; }
+    }
+
+    @keyframes waddle {
+      0%, 100% { transform: rotate(-3deg) translateY(0); }
+      50% { transform: rotate(3deg) translateY(-2px); }
+    }
+
+    @keyframes hop {
+      0%, 60%, 100% { transform: translateY(0) rotate(-2deg); }
+      70% { transform: translateY(-7px) rotate(2deg); }
+      82% { transform: translateY(0) rotate(-1deg); }
+    }
+
+    @keyframes pulseRing {
+      0% { opacity: 0.65; transform: scale(0.6); }
+      100% { opacity: 0; transform: scale(1.55); }
+    }
+
+    @keyframes flakeFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-5px) rotate(8deg); }
+    }
+
+    @keyframes orbit {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes xpShine {
+      0%, 25% { transform: translateX(-110%); }
+      60%, 100% { transform: translateX(110%); }
+    }
+
+    @keyframes savePulse {
+      0%, 100% { opacity: 0.45; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(18px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes feedbackIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes resultPop {
+      from { opacity: 0; transform: scale(0.7) rotate(-6deg); }
+      to { opacity: 1; transform: scale(1) rotate(0); }
+    }
+
+    @keyframes floatSoft {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(10px); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-5px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(3px); }
+    }
+
+    @media (min-width: 460px) {
+      .app {
+        padding: 0 16px;
+      }
+
+      .gateway {
+        min-height: 365px;
+      }
+
+      .gateway-visual {
+        min-height: 308px;
+      }
+
+      .console {
+        padding: 22px 21px 18px;
+      }
+
+      .mission-list {
+        gap: 8px;
+      }
+
+      .mission-row {
+        padding: 9px 11px;
+      }
+
+      .pillars {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .pillar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 7px;
+        min-height: 108px;
+        padding: 12px;
+      }
+
+      .pillar-arrow {
+        position: absolute;
+        top: 12px;
+        right: 11px;
+      }
+
+      .pillar-copy {
+        width: 100%;
+      }
+
+      .options-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .question-card {
+        padding: 20px 18px;
+      }
+
+      .mission-panel {
+        padding: 27px 24px 22px;
+      }
+
+      .name-panel {
+        padding: 32px 30px 27px;
+      }
+
+      .pillar-panel {
+        padding: 28px 25px 23px;
+      }
+
+      .leaderboard-panel {
+        padding: 28px 23px 22px;
+      }
+    }
+
+    @media (min-width: 760px) {
+      .app {
+        padding: 0 22px;
+      }
+
+      .topbar {
+        padding-top: calc(20px + env(safe-area-inset-top));
+      }
+
+      .brand-mark {
+        width: 44px;
+        height: 44px;
+      }
+
+      .brand-copy b {
+        font-size: 0.63rem;
+      }
+
+      .hero {
+        padding: 25px 4px 30px;
+      }
+
+      .lobby {
+        gap: 14px;
+      }
+
+      .console {
+        grid-column: 1 / -1;
+        order: -1;
+        width: 100%;
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 24px 28px 20px;
+      }
+
+      .console-inner-wide {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 18px;
+      }
+
+      .gateway {
+        min-height: 470px;
+      }
+
+      .gateway-visual {
+        min-height: 410px;
+      }
+
+      .gateway-footer {
+        padding: 11px 16px;
+      }
+
+      .gateway-copy {
+        right: 18px;
+        bottom: 18px;
+        left: 18px;
+      }
+
+      .climate-chip {
+        font-size: 0.51rem;
+      }
+
+      .climate-chip b {
+        font-size: 0.67rem;
+      }
+
+      .pillars-section {
+        padding: 28px 2px 30px;
+      }
+
+      .pillars {
+        gap: 11px;
+      }
+    }
+
+    @media (min-width: 980px) {
+      .lobby {
+        grid-template-columns: minmax(0, 1fr) minmax(318px, 0.93fr) minmax(0, 1fr);
+        gap: 16px;
+      }
+
+      .console {
+        grid-column: auto;
+        order: 0;
+        width: auto;
+        max-width: none;
+        margin: 0;
+        padding: 23px 22px 19px;
+      }
+
+      .console-inner-wide {
+        display: block;
+      }
+
+      .gateway {
+        min-height: 548px;
+      }
+
+      .gateway-visual {
+        min-height: 492px;
+      }
+
+      .gateway-name {
+        font-size: clamp(1.7rem, 2.8vw, 2.55rem);
+      }
+
+      .console-head h2 {
+        font-size: 1.58rem;
+      }
+
+      .explorer-row {
+        padding: 11px;
+      }
+
+      .avatar {
+        width: 54px;
+        height: 54px;
+      }
+
+      .mission-list {
+        gap: 9px;
+        margin-top: 15px;
+      }
+
+      .mission-row {
+        padding: 10px 11px;
+      }
+
+      .mission-name {
+        font-size: 0.65rem;
+      }
+
+      .mission-status {
+        font-size: 0.51rem;
+      }
+
+      .mission-pips i {
+        height: 15px;
+      }
+
+      .badge-shelf {
+        margin-top: 14px;
+      }
+
+      .badge {
+        padding: 9px 3px;
+      }
+
+      .badge .badge-icon {
+        font-size: 0.9rem;
+      }
+
+      .badge span:last-child {
+        font-size: 0.43rem;
+      }
+
+      .console-footer {
+        margin-top: 15px;
+      }
+
+      .autosave,
+      .text-link {
+        font-size: 0.49rem;
+      }
+
+      .pillars-heading {
+        font-size: 0.51rem;
+      }
+
+      .pillar {
+        min-height: 105px;
+        padding: 15px;
+      }
+
+      .pillar-icon {
+        width: 37px;
+        height: 37px;
+      }
+
+      .pillar-copy strong {
+        font-size: 0.65rem;
+      }
+
+      .pillar-copy small {
+        font-size: 0.47rem;
+      }
+
+      .site-footer {
+        flex-direction: row;
+        justify-content: space-between;
+        font-size: 0.49rem;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .gateway {
+        min-height: 575px;
+      }
+
+      .gateway-visual {
+        min-height: 519px;
+      }
+
+      .console {
+        padding: 26px 25px 21px;
+      }
+
+      .holo-stage {
+        max-width: 290px;
+      }
+    }
+
+    @media (max-width: 359px) {
+      .lobby {
+        grid-template-columns: 1fr;
+      }
+
+      .gateway {
+        min-height: 330px;
+      }
+
+      .gateway-visual {
+        min-height: 276px;
+      }
+
+      .gateway-foot-meta {
+        font-size: 0.46rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+
+      .snow-layer {
+        display: none;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <div class="aurora-glow"></div>
+    <div class="aurora-glow two"></div>
+    <div class="stars"></div>
+  </div>
+  <div class="snow-layer" id="snowLayer" aria-hidden="true"></div>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand" aria-label="Polar Language Station">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M12 2v20M3.4 7l17.2 10M3.4 17L20.6 7"/>
+            <path d="M9 4.5l3 2 3-2M9 19.5l3-2 3 2M4.2 10.7l3.4.6 1-3M19.8 13.3l-3.4-.6-1 3M4.2 13.3l3.4-.6 1 3M19.8 10.7l-3.4.6-1-3"/>
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <b>POLAR LANGUAGE STATION</b>
+          <small>ENGLISH ON ICE · EST. 2026</small>
+        </span>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="soundToggle" type="button" aria-pressed="true" aria-label="Mute sound">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 9v6h4l5 4V5L8 9H4z"/>
+            <path d="M16 8.5a5 5 0 010 7M18.6 6a8.5 8.5 0 010 12"/>
+          </svg>
+        </button>
+        <button class="podium-btn" type="button" data-open-leaderboard aria-label="Open the Polar Hall of Fame">
+          <span class="trophy" aria-hidden="true">🏆</span>
+          <span>Podium</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="hero" aria-labelledby="gameTitle">
+      <span class="snow-flake one" aria-hidden="true">❄</span>
+      <span class="snow-flake two" aria-hidden="true">❅</span>
+      <span class="snow-flake three" aria-hidden="true">✦</span>
+      <p class="eyebrow">Aboard the Polar Language Station</p>
+      <h1 class="hero-title" id="gameTitle">#ENGLISH ON ICE</h1>
+      <p class="subtitle-en">An English Adventure in the Polar Regions</p>
+      <p class="subtitle-es">Un Viaje de Aprendizaje Polar</p>
+    </section>
+
+    <main class="lobby" aria-label="Polar expedition lobby">
+      <button class="gateway gateway--arctic" id="arcticGateway" type="button" aria-label="Enter the Arctic North Pole mission, 5 English questions">
+        <span class="gateway-visual">
+          <span class="aurora-band one" aria-hidden="true"></span>
+          <span class="aurora-band two" aria-hidden="true"></span>
+          <span class="arctic-stars" aria-hidden="true"></span>
+          <span class="arctic-horizon" aria-hidden="true"></span>
+          <span class="holo-stage" aria-hidden="true">
+            <span class="holo-beam"></span>
+            <span class="holo-ring"></span>
+            <span class="holo-bear">🐻‍❄️</span>
+            <span class="holo-scan"></span>
+          </span>
+          <span class="climate-panel" aria-hidden="true">
+            <span class="climate-chip"><b>−32°</b> C</span>
+            <span class="climate-chip"><b>18</b> kt wind</span>
+            <span class="climate-chip">Polar night</span>
+          </span>
+          <span class="gateway-scrim"></span>
+          <span class="gateway-copy">
+            <span class="station-tag"><span class="dot"></span>Station 01 · Gateway</span>
+            <span class="gateway-name">ARCTIC<span>NORTH POLE</span></span>
+            <span class="gateway-es">Polo Norte Ártico · Aurora Zone</span>
+          </span>
+        </span>
+        <span class="gateway-footer">
+          <span class="gateway-foot-meta"><span class="spark">✦</span> Polar bear mission</span>
+          <span class="enter-pill">Enter
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h8M7 3l3 3-3 3"/></svg>
+          </span>
+        </span>
+      </button>
+
+      <section class="console" aria-labelledby="progressTitle">
+        <div class="console-head">
+          <button class="console-head-trophy" type="button" data-open-leaderboard aria-label="Open the Polar Hall of Fame">🏆</button>
+          <p class="eyebrow">Explorer dashboard</p>
+          <h2 id="progressTitle">Progress &amp; Missions</h2>
+          <span class="console-es">Progreso y Misiones</span>
+        </div>
+
+        <div class="console-inner-wide">
+          <div>
+            <div class="explorer-row">
+              <div class="avatar-wrap">
+                <div class="avatar" id="avatarInitial" aria-hidden="true">E</div>
+                <span class="level-chip" id="levelChip">LV 1</span>
+              </div>
+              <div class="explorer-copy">
+                <span class="welcome">Welcome aboard,</span>
+                <strong class="explorer-name" id="profileName">Explorer</strong>
+                <span class="explorer-rank" id="levelName">Snow Scout</span>
+              </div>
+              <button class="edit-name" id="editNameBtn" type="button" aria-label="Change explorer name">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 20h4l10.5-10.5a2.1 2.1 0 00-3-3L5 17v3z"/>
+                  <path d="M13.5 6.5l3 3"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="xp-block">
+              <div class="xp-topline">
+                <span class="xp-label">Polar XP</span>
+                <span class="xp-value"><strong id="xpValue">0</strong> XP</span>
+              </div>
+              <div class="xp-track" role="progressbar" aria-label="Progress to the next explorer level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="xpTrack">
+                <div class="xp-fill" id="xpFill"></div>
+              </div>
+              <p class="xp-next" id="xpNext"><b>100</b> XP to <em>Aurora Cadet</em></p>
+            </div>
+
+            <div class="mission-list" aria-label="Available missions">
+              <button class="mission-row" type="button" data-mission="arctic">
+                <span class="mission-icon" aria-hidden="true">❄</span>
+                <span class="mission-copy">
+                  <span class="mission-name">Arctic Field Mission</span>
+                  <span class="mission-status" id="arcticStatus">Ready to explore · 5 questions</span>
+                </span>
+                <span class="mission-pips" id="arcticPips" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+              </button>
+              <button class="mission-row" type="button" data-mission="antarctic">
+                <span class="mission-icon" aria-hidden="true">🐧</span>
+                <span class="mission-copy">
+                  <span class="mission-name">Antarctic Field Mission</span>
+                  <span class="mission-status" id="antarcticStatus">Ready to explore · 5 questions</span>
+                </span>
+                <span class="mission-pips" id="antarcticPips" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div class="badge-shelf" aria-label="Explorer badges">
+              <div class="badge is-unlocked" data-level="1">
+                <span class="badge-icon" aria-hidden="true">❄</span>
+                <span>Snow Scout</span>
+              </div>
+              <div class="badge" data-level="2">
+                <span class="badge-icon" aria-hidden="true">✦</span>
+                <span>Aurora Cadet</span>
+              </div>
+              <div class="badge" data-level="4">
+                <span class="badge-icon" aria-hidden="true">🧭</span>
+                <span>Polar Guardian</span>
+              </div>
+            </div>
+
+            <div class="console-footer">
+              <span class="autosave">Autosave active</span>
+              <button class="text-link" type="button" data-open-leaderboard>View podium</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <button class="gateway gateway--antarctic" id="antarcticGateway" type="button" aria-label="Enter the Antarctica South Pole mission, 5 English questions">
+        <span class="gateway-visual">
+          <span class="antarctic-sun" aria-hidden="true"></span>
+          <span class="ice-peak one" aria-hidden="true"></span>
+          <span class="ice-peak two" aria-hidden="true"></span>
+          <span class="pulse-point whale" aria-hidden="true">🐋<span class="pulse-label">Whales</span></span>
+          <span class="pulse-point iceberg" aria-hidden="true">🧊<span class="pulse-label">Icebergs</span></span>
+          <span class="penguin p1" aria-hidden="true">🐧</span>
+          <span class="penguin p2" aria-hidden="true">🐧</span>
+          <span class="penguin p3" aria-hidden="true">🐧</span>
+          <span class="ice-platform" aria-hidden="true"></span>
+          <span class="climate-panel" aria-hidden="true">
+            <span class="climate-chip"><b>−18°</b> C</span>
+            <span class="climate-chip"><b>24h</b> daylight</span>
+          </span>
+          <span class="gateway-scrim"></span>
+          <span class="gateway-copy">
+            <span class="station-tag"><span class="dot"></span>Station 02 · Gateway</span>
+            <span class="gateway-name">ANTARCTICA<span>SOUTH POLE</span></span>
+            <span class="gateway-es">Polo Sur Antártico · Penguin Coast</span>
+          </span>
+        </span>
+        <span class="gateway-footer">
+          <span class="gateway-foot-meta"><span class="spark">✦</span> Penguin mission</span>
+          <span class="enter-pill">Enter
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h8M7 3l3 3-3 3"/></svg>
+          </span>
+        </span>
+      </button>
+    </main>
+    <section class="pillars-section" aria-labelledby="pillarsTitle">
+      <div class="pillars-heading" id="pillarsTitle">
+        <b>The Four Polar Pillars</b>
+        <span>Los cuatro pilares polares</span>
+      </div>
+      <div class="pillars">
+        <button class="pillar" type="button" data-pillar="learn">
+          <span class="pillar-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 016.5 3H20v16H6.5A2.5 2.5 0 004 21.5V5.5z"/><path d="M4 18.5A2.5 2.5 0 016.5 16H20M8 7h8M8 10h6"/></svg>
+          </span>
+          <span class="pillar-copy">
+            <strong>LEARN</strong>
+            <small>Aprender · Vocabulary</small>
+          </span>
+          <span class="pillar-arrow" aria-hidden="true">↗</span>
+        </button>
+        <button class="pillar" type="button" data-pillar="create">
+          <span class="pillar-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.7 4.8L18.5 9.5l-4.8 1.7L12 16l-1.7-4.8L5.5 9.5l4.8-1.7L12 3z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2zM5 15l.6 1.7 1.7.6-1.7.6L5 19.6l-.6-1.7-1.7-.6 1.7-.6L5 15z"/></svg>
+          </span>
+          <span class="pillar-copy">
+            <strong>CREATE</strong>
+            <small>Crear · Story Studio</small>
+          </span>
+          <span class="pillar-arrow" aria-hidden="true">↗</span>
+        </button>
+        <button class="pillar" type="button" data-pillar="explore">
+          <span class="pillar-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.7 8.3l-2.1 5.3-5.3 2.1 2.1-5.3 5.3-2.1z"/></svg>
+          </span>
+          <span class="pillar-copy">
+            <strong>EXPLORE</strong>
+            <small>Explorar · Expedition Deck</small>
+          </span>
+          <span class="pillar-arrow" aria-hidden="true">↗</span>
+        </button>
+        <button class="pillar" type="button" data-pillar="protect">
+          <span class="pillar-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.5c0 4.4-2.9 8.2-7 9.5-4.1-1.3-7-5.1-7-9.5V6l7-3z"/><path d="M9 12l2 2 4-4.5"/></svg>
+          </span>
+          <span class="pillar-copy">
+            <strong>PROTECT</strong>
+            <small>Proteger · Conservation</small>
+          </span>
+          <span class="pillar-arrow" aria-hidden="true">↗</span>
+        </button>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <span>❄ Local progress · Saved on this device</span>
+      <span>Speak English, explore further.</span>
+    </footer>
+  </div>
+  <div class="modal" id="nameModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="nameModal"></div>
+    <div class="modal-panel name-panel" role="dialog" aria-modal="true" aria-labelledby="nameTitle">
+      <button class="modal-close" type="button" id="nameClose" data-close-modal="nameModal" aria-label="Close explorer profile" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="onboard-emblem" aria-hidden="true"><span class="big-flake">❄</span></div>
+      <p class="eyebrow" id="nameKicker">Polar explorer check-in</p>
+      <h2 id="nameTitle">Welcome to the station</h2>
+      <p class="name-es" id="nameSubtitle">Bienvenido a la estación polar</p>
+      <p class="name-copy" id="nameCopy">Enter your name or nickname. No PIN, no password — just your explorer identity for this polar adventure.</p>
+      <form class="name-form" id="nameForm" novalidate>
+        <label for="explorerName">Explorer name / Nombre de explorador</label>
+        <input class="name-input" id="explorerName" name="explorerName" type="text" maxlength="20" placeholder="e.g. Luna" autocomplete="nickname" enterkeyhint="go" spellcheck="false">
+        <p class="input-error" id="nameError" role="alert"></p>
+        <button class="primary-btn" id="nameSubmit" type="submit">Begin the expedition</button>
+        <button class="ghost-btn" id="nameCancel" type="button" data-close-modal="nameModal" hidden>Cancel</button>
+      </form>
+      <p class="privacy-note">🔒 Your name and progress are saved only in this browser. No password needed.</p>
+    </div>
+  </div>
+
+  <div class="modal" id="missionModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="missionModal"></div>
+    <div class="modal-panel mission-panel" id="missionPanel" role="dialog" aria-modal="true" aria-labelledby="missionContent">
+      <button class="modal-close" type="button" data-close-modal="missionModal" aria-label="Exit mission">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div id="missionContent"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="leaderboardModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="leaderboardModal"></div>
+    <div class="modal-panel leaderboard-panel" role="dialog" aria-modal="true" aria-labelledby="leaderboardTitle">
+      <button class="modal-close" type="button" data-close-modal="leaderboardModal" aria-label="Close hall of fame">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div id="leaderboardContent"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="pillarModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="pillarModal"></div>
+    <div class="modal-panel pillar-panel" role="dialog" aria-modal="true" aria-labelledby="pillarTitle">
+      <button class="modal-close" type="button" data-close-modal="pillarModal" aria-label="Close pillar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div id="pillarContent"></div>
+    </div>
+  </div>
+  <div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="false"></div>
+  <div class="fx-layer" id="fxLayer" aria-hidden="true"></div>
+
+  <script>
+    (function () {
+      "use strict";
+      const STORAGE_PROFILE = "eoi_profile_v1";
+      const STORAGE_SOUND = "eoi_sound_v1";
+
+      const LEVELS = [
+        { title: "Snow Scout", es: "Explorador de nieve", min: 0 },
+        { title: "Aurora Cadet", es: "Cadete de aurora", min: 100 },
+        { title: "Ice Navigator", es: "Navegante de hielo", min: 260 },
+        { title: "Polar Guardian", es: "Guardián polar", min: 460 },
+        { title: "Arctic Legend", es: "Leyenda ártica", min: 720 }
+      ];
+
+      const DEMO_SCORES = [
+        { name: "Sofía", xp: 340 },
+        { name: "Mateo", xp: 275 },
+        { name: "Valentina", xp: 210 },
+        { name: "Diego", xp: 165 },
+        { name: "Camila", xp: 120 },
+        { name: "Lucas", xp: 70 }
+      ];
+
+      const MISSIONS = {
+        arctic: {
+          title: "Arctic Field Mission",
+          station: "Station 01 · Arctic North Pole",
+          subtitle: "Aurora, sea ice and the king of the north.",
+          emoji: "❄",
+          accent: "#72e0ff",
+          accentRgb: "114, 224, 255",
+          questions: [
+            {
+              type: "choice",
+              prompt: "Which animal is the true king of the Arctic?",
+              options: ["Polar bear", "Emperor penguin", "Desert camel", "Tropical parrot"],
+              answer: "Polar bear",
+              explain: "Polar bears live around the Arctic Ocean. Penguins live in the Southern Hemisphere.",
+              es: "El oso polar vive en el Ártico; los pingüinos viven en el hemisferio sur.",
+              readText: "The polar bear is the true king of the Arctic."
+            },
+            {
+              type: "fill",
+              before: "Sea ice is frozen",
+              after: ".",
+              bank: ["seawater", "sand", "lava", "grass"],
+              answer: "seawater",
+              explain: "Sea ice forms when seawater freezes at the ocean surface.",
+              es: "El hielo marino se forma cuando el agua de mar se congela.",
+              readText: "Sea ice is frozen seawater."
+            },
+            {
+              type: "choice",
+              prompt: "What is the glowing light show in the Arctic sky called?",
+              options: ["Aurora borealis", "Desert mirage", "Meteor shower", "Solar eclipse"],
+              answer: "Aurora borealis",
+              explain: "Aurora borealis, or the Northern Lights, glows above the Arctic.",
+              es: "La aurora boreal ilumina el cielo del hemisferio norte.",
+              readText: "The glowing light show is called the aurora borealis."
+            },
+            {
+              type: "fill",
+              before: "A polar bear's thick fur keeps it",
+              after: ".",
+              bank: ["warm", "cool", "wet", "invisible"],
+              answer: "warm",
+              explain: "Thick fur and a layer of fat insulate polar bears from the cold.",
+              es: "El pelaje grueso y la grasa protegen al oso polar del frío.",
+              readText: "A polar bear's thick fur keeps it warm."
+            },
+            {
+              type: "choice",
+              prompt: "What do Arctic foxes change in winter?",
+              options: ["The color of their fur", "The number of their legs", "Their species", "Their continent"],
+              answer: "The color of their fur",
+              explain: "Arctic foxes grow a white winter coat for camouflage in the snow.",
+              es: "El zorro ártico cambia el color de su pelaje para camuflarse en la nieve.",
+              readText: "Arctic foxes change the color of their fur in winter."
+            }
+          ]
+        },
+        antarctic: {
+          title: "Antarctic Field Mission",
+          station: "Station 02 · Antarctica South Pole",
+          subtitle: "Penguins, blue whales and the frozen south.",
+          emoji: "🐧",
+          accent: "#f2cf8c",
+          accentRgb: "242, 207, 140",
+          questions: [
+            {
+              type: "choice",
+              prompt: "Which birds are famous for living in Antarctica?",
+              options: ["Penguins", "Parrots", "Flamingos", "Hummingbirds"],
+              answer: "Penguins",
+              explain: "Penguins are perfectly adapted to the cold Southern Ocean and Antarctic coasts.",
+              es: "Los pingüinos están adaptados al frío del océano austral y de la costa antártica.",
+              readText: "Penguins are famous for living in Antarctica."
+            },
+            {
+              type: "fill",
+              before: "Antarctica is a frozen",
+              after: ".",
+              bank: ["desert", "forest", "city", "garden"],
+              answer: "desert",
+              explain: "Antarctica is the world's largest cold desert because it receives very little precipitation.",
+              es: "La Antártida es el desierto frío más grande del mundo por sus escasas precipitaciones.",
+              readText: "Antarctica is a frozen desert."
+            },
+            {
+              type: "choice",
+              prompt: "What is the largest animal on Earth?",
+              options: ["Blue whale", "African elephant", "Polar bear", "King penguin"],
+              answer: "Blue whale",
+              explain: "Blue whales visit Antarctic waters and can grow longer than a bus.",
+              es: "La ballena azul visita aguas antárticas y puede ser más larga que un autobús.",
+              readText: "The blue whale is the largest animal on Earth."
+            },
+            {
+              type: "fill",
+              before: "Penguins are excellent",
+              after: ".",
+              bank: ["swimmers", "pilots", "climbers", "bakers"],
+              answer: "swimmers",
+              explain: "Their wings work like flippers, making penguins powerful swimmers.",
+              es: "Sus alas funcionan como aletas y los convierten en nadadores potentes.",
+              readText: "Penguins are excellent swimmers."
+            },
+            {
+              type: "choice",
+              prompt: "Which agreement protects Antarctica?",
+              options: ["The Antarctic Treaty", "The North Pole Pact", "The Penguin Law", "The Snow Contract"],
+              answer: "The Antarctic Treaty",
+              explain: "The Antarctic Treaty reserves Antarctica for peace and scientific research.",
+              es: "El Tratado Antártico reserva la Antártida para la paz y la investigación.",
+              readText: "The Antarctic Treaty protects Antarctica."
+            }
+          ]
+        }
+      };
+
+      const PILLARS = {
+        learn: {
+          title: "Vocabulary Lab",
+          es: "Laboratorio de vocabulario",
+          description: "Collect new polar words, listen to their pronunciation and use them in a sentence.",
+          descriptionEs: "Colecciona palabras polares, escucha su pronunciación y úsalas en una oración.",
+          phrase: "Learn a word, unlock a world.",
+          word: "glacier",
+          translation: "glaciar",
+          icon: "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 5.5A2.5 2.5 0 016.5 3H20v16H6.5A2.5 2.5 0 004 21.5V5.5z\"/><path d=\"M4 18.5A2.5 2.5 0 016.5 16H20M8 7h8M8 10h6\"/></svg>"
+        },
+        create: {
+          title: "Story Studio",
+          es: "Estudio de historias",
+          description: "Mix your polar vocabulary into an expedition story full of ice, animals and discovery.",
+          descriptionEs: "Combina tu vocabulario polar en una historia de expedición, hielo y descubrimiento.",
+          phrase: "Create your own polar adventure.",
+          word: "expedition",
+          translation: "expedición",
+          icon: "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 3l1.7 4.8L18.5 9.5l-4.8 1.7L12 16l-1.7-4.8L5.5 9.5l4.8-1.7L12 3z\"/><path d=\"M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2z\"/></svg>"
+        },
+        explore: {
+          title: "Expedition Deck",
+          es: "Cubierta de expedición",
+          description: "Read maps, compare climates and follow the wildlife across the polar regions.",
+          descriptionEs: "Lee mapas, compara climas y sigue la vida animal por las regiones polares.",
+          phrase: "Explore further than the ice.",
+          word: "horizon",
+          translation: "horizonte",
+          icon: "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M15.7 8.3l-2.1 5.3-5.3 2.1 2.1-5.3 5.3-2.1z\"/></svg>"
+        },
+        protect: {
+          title: "Conservation Corps",
+          es: "Cuerpo de conservación",
+          description: "Discover how small choices help protect sea ice, wildlife and the polar habitat.",
+          descriptionEs: "Descubre cómo pequeñas decisiones protegen el hielo marino, la fauna y el hábitat polar.",
+          phrase: "Protect what you love.",
+          word: "habitat",
+          translation: "hábitat",
+          icon: "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 3l7 3v5.5c0 4.4-2.9 8.2-7 9.5-4.1-1.3-7-5.1-7-9.5V6l7-3z\"/><path d=\"M9 12l2 2 4-4.5\"/></svg>"
+        }
+      };
+      const $ = (selector, root = document) => root.querySelector(selector);
+      const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+      const refs = {
+        snowLayer: $("#snowLayer"),
+        soundToggle: $("#soundToggle"),
+        arcticGateway: $("#arcticGateway"),
+        antarcticGateway: $("#antarcticGateway"),
+        avatarInitial: $("#avatarInitial"),
+        profileName: $("#profileName"),
+        levelChip: $("#levelChip"),
+        levelName: $("#levelName"),
+        xpValue: $("#xpValue"),
+        xpFill: $("#xpFill"),
+        xpTrack: $("#xpTrack"),
+        xpNext: $("#xpNext"),
+        arcticStatus: $("#arcticStatus"),
+        antarcticStatus: $("#antarcticStatus"),
+        arcticPips: $("#arcticPips"),
+        antarcticPips: $("#antarcticPips"),
+        editNameBtn: $("#editNameBtn"),
+        nameModal: $("#nameModal"),
+        nameClose: $("#nameClose"),
+        nameCancel: $("#nameCancel"),
+        nameKicker: $("#nameKicker"),
+        nameTitle: $("#nameTitle"),
+        nameSubtitle: $("#nameSubtitle"),
+        nameCopy: $("#nameCopy"),
+        nameForm: $("#nameForm"),
+        nameSubmit: $("#nameSubmit"),
+        nameError: $("#nameError"),
+        explorerName: $("#explorerName"),
+        missionModal: $("#missionModal"),
+        missionPanel: $("#missionPanel"),
+        missionContent: $("#missionContent"),
+        leaderboardModal: $("#leaderboardModal"),
+        leaderboardContent: $("#leaderboardContent"),
+        pillarModal: $("#pillarModal"),
+        pillarContent: $("#pillarContent"),
+        toastWrap: $("#toastWrap"),
+        fxLayer: $("#fxLayer")
+      };
+
+      let profile = loadProfile();
+      let soundOn = readSoundPreference();
+      let activeModal = null;
+      let lastFocused = null;
+      let audioContext = null;
+      let missionState = null;
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      function safeParse(value, fallback) {
+        try {
+          return JSON.parse(value);
+        } catch (error) {
+          return fallback;
+        }
+      }
+
+      function loadProfile() {
+        try {
+          const raw = safeParse(localStorage.getItem(STORAGE_PROFILE), null);
+          if (!raw || typeof raw !== "object" || !raw.name) return null;
+          const missions = {};
+          Object.keys(MISSIONS).forEach((branch) => {
+            const stored = raw.missions && raw.missions[branch] ? raw.missions[branch] : {};
+            missions[branch] = {
+              completed: Boolean(stored.completed),
+              best: Math.min(5, Math.max(0, Number(stored.best) || 0))
+            };
+          });
+          return {
+            name: String(raw.name).trim().slice(0, 20) || "Explorer",
+            xp: Math.max(0, Number(raw.xp) || 0),
+            missions,
+            correct: Math.max(0, Number(raw.correct) || 0),
+            answered: Math.max(0, Number(raw.answered) || 0),
+            createdAt: raw.createdAt || new Date().toISOString(),
+            lastPlayed: raw.lastPlayed || new Date().toISOString()
+          };
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function saveProfile() {
+        if (!profile) return;
+        try {
+          profile.lastPlayed = new Date().toISOString();
+          localStorage.setItem(STORAGE_PROFILE, JSON.stringify(profile));
+        } catch (error) {
+          showToast("Progress could not be saved in this browser.", "!");
+        }
+      }
+
+      function readSoundPreference() {
+        try {
+          return localStorage.getItem(STORAGE_SOUND) !== "off";
+        } catch (error) {
+          return true;
+        }
+      }
+
+      function saveSoundPreference() {
+        try {
+          localStorage.setItem(STORAGE_SOUND, soundOn ? "on" : "off");
+        } catch (error) {
+          return;
+        }
+      }
+
+      function getLevel(xp) {
+        let index = 0;
+        LEVELS.forEach((level, levelIndex) => {
+          if (xp >= level.min) index = levelIndex;
+        });
+        const current = LEVELS[index];
+        const next = LEVELS[index + 1] || null;
+        const span = next ? next.min - current.min : 1;
+        const progress = next ? Math.min(100, ((xp - current.min) / span) * 100) : 100;
+        return { index, current, next, progress };
+      }
+
+      function getInitial(name) {
+        const characters = Array.from(String(name || "E").trim());
+        return (characters[0] || "E").toUpperCase();
+      }
+
+      function sanitizeName(value) {
+        return String(value || "").trim().replace(/\s+/g, " ").slice(0, 20);
+      }
+
+      function escapeHTML(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function shuffle(items) {
+        const result = items.slice();
+        for (let index = result.length - 1; index > 0; index -= 1) {
+          const target = Math.floor(Math.random() * (index + 1));
+          const temp = result[index];
+          result[index] = result[target];
+          result[target] = temp;
+        }
+        return result;
+      }
+
+      function randomBetween(min, max) {
+        return min + Math.random() * (max - min);
+      }
+
+      function renderDashboard() {
+        const safeProfile = profile || {
+          name: "Explorer",
+          xp: 0,
+          missions: {
+            arctic: { completed: false, best: 0 },
+            antarctic: { completed: false, best: 0 }
+          }
+        };
+        const level = getLevel(safeProfile.xp);
+        refs.profileName.textContent = safeProfile.name;
+        refs.avatarInitial.textContent = getInitial(safeProfile.name);
+        refs.levelChip.textContent = "LV " + (level.index + 1);
+        refs.levelName.textContent = level.current.title;
+        refs.levelName.title = level.current.es;
+        refs.xpValue.textContent = String(safeProfile.xp);
+        refs.xpFill.style.width = level.progress + "%";
+        refs.xpTrack.setAttribute("aria-valuenow", String(Math.round(level.progress)));
+        refs.xpTrack.setAttribute("aria-valuetext", safeProfile.xp + " XP, " + level.current.title);
+
+        if (level.next) {
+          const remaining = Math.max(0, level.next.min - safeProfile.xp);
+          refs.xpNext.innerHTML = "<b>" + remaining + "</b> XP to <em>" + level.next.title + "</em>";
+        } else {
+          refs.xpNext.innerHTML = "<b>Maximum rank</b> · <em>Arctic Legend</em>";
+        }
+
+        Object.keys(MISSIONS).forEach((branch) => {
+          const mission = MISSIONS[branch];
+          const progress = safeProfile.missions[branch] || { completed: false, best: 0 };
+          const status = refs[branch + "Status"];
+          const pips = refs[branch + "Pips"];
+          const row = document.querySelector('[data-mission="' + branch + '"]');
+          if (status) {
+            if (progress.completed) {
+              status.textContent = "Completed · Best " + progress.best + "/5 · Replay for XP";
+            } else if (progress.best > 0) {
+              status.textContent = "In progress · Best " + progress.best + "/5";
+            } else {
+              status.textContent = "Ready to explore · 5 questions";
+            }
+          }
+          if (row) {
+            row.classList.toggle("is-complete", progress.completed);
+            row.setAttribute("aria-label", mission.title + ". " + (status ? status.textContent : ""));
+          }
+          if (pips) {
+            Array.from(pips.children).forEach((pip, pipIndex) => {
+              pip.classList.toggle("on", pipIndex < progress.best);
+            });
+          }
+        });
+
+        const levelNumber = level.index + 1;
+        $$(".badge").forEach((badge) => {
+          const badgeLevel = Number(badge.dataset.level) || 1;
+          badge.classList.toggle("is-unlocked", levelNumber >= badgeLevel);
+        });
+      }
+
+      function awardXP(amount) {
+        if (!profile || !amount) return;
+        const beforeLevel = getLevel(profile.xp).index;
+        profile.xp += Math.max(0, Math.round(amount));
+        const afterLevel = getLevel(profile.xp).index;
+        saveProfile();
+        renderDashboard();
+        if (afterLevel > beforeLevel) {
+          const newLevel = LEVELS[afterLevel];
+          showToast("Level up! You are now " + newLevel.title + ".", "✦");
+          finishSound();
+          celebrate();
+        }
+      }
+
+      function buildSnow() {
+        if (!refs.snowLayer || reducedMotion) return;
+        const total = window.innerWidth < 700 ? 22 : 36;
+        const fragment = document.createDocumentFragment();
+        for (let index = 0; index < total; index += 1) {
+          const flake = document.createElement("span");
+          flake.className = "snowflake";
+          flake.style.left = randomBetween(-2, 102).toFixed(2) + "%";
+          flake.style.setProperty("--size", randomBetween(2, 6).toFixed(1) + "px");
+          flake.style.setProperty("--duration", randomBetween(10, 24).toFixed(1) + "s");
+          flake.style.setProperty("--delay", randomBetween(-22, 0).toFixed(1) + "s");
+          flake.style.setProperty("--drift", randomBetween(-45, 55).toFixed(0) + "px");
+          flake.style.setProperty("--opacity", randomBetween(0.2, 0.7).toFixed(2));
+          fragment.appendChild(flake);
+        }
+        refs.snowLayer.appendChild(fragment);
+      }
+
+      function showToast(message, icon) {
+        if (!refs.toastWrap) return;
+        while (refs.toastWrap.children.length >= 3) {
+          refs.toastWrap.firstElementChild.remove();
+        }
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        const iconEl = document.createElement("span");
+        iconEl.className = "toast-icon";
+        iconEl.setAttribute("aria-hidden", "true");
+        iconEl.textContent = icon || "✦";
+        const textEl = document.createElement("span");
+        textEl.textContent = message;
+        toast.appendChild(iconEl);
+        toast.appendChild(textEl);
+        refs.toastWrap.appendChild(toast);
+        window.setTimeout(() => {
+          toast.classList.add("is-leaving");
+          window.setTimeout(() => toast.remove(), 300);
+        }, 3400);
+      }
+
+      function celebrate() {
+        if (reducedMotion || !refs.fxLayer) return;
+        const colors = ["#72e0ff", "#f2cf8c", "#ffffff", "#7ff0c1", "#a9ecff"];
+        const origins = [
+          { x: window.innerWidth * 0.5, y: window.innerHeight * 0.35, count: 34 },
+          { x: window.innerWidth * 0.2, y: window.innerHeight * 0.52, count: 16 },
+          { x: window.innerWidth * 0.8, y: window.innerHeight * 0.52, count: 16 }
+        ];
+        origins.forEach((origin) => {
+          for (let index = 0; index < origin.count; index += 1) {
+            const particle = document.createElement("span");
+            particle.className = "fx-particle";
+            const size = randomBetween(3, 9);
+            particle.style.width = size + "px";
+            particle.style.height = size + "px";
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.left = origin.x + "px";
+            particle.style.top = origin.y + "px";
+            particle.style.opacity = "1";
+            refs.fxLayer.appendChild(particle);
+            const angle = randomBetween(0, Math.PI * 2);
+            const distance = randomBetween(80, 260);
+            const x = Math.cos(angle) * distance;
+            const y = Math.sin(angle) * distance + randomBetween(20, 150);
+            particle.animate(
+              [
+                { transform: "translate(-50%, -50%) scale(1) rotate(0deg)", opacity: 1 },
+                { transform: "translate(calc(-50% + " + x + "px), calc(-50% + " + y + "px)) scale(0.25) rotate(" + randomBetween(120, 520) + "deg)", opacity: 0 }
+              ],
+              { duration: randomBetween(900, 1500), easing: "cubic-bezier(0.15, 0.7, 0.3, 1)", fill: "forwards" }
+            ).finished.then(() => particle.remove()).catch(() => particle.remove());
+          }
+        });
+      }
+
+      function getAudioContext() {
+        if (!soundOn) return null;
+        try {
+          const Context = window.AudioContext || window.webkitAudioContext;
+          if (!Context) return null;
+          if (!audioContext) audioContext = new Context();
+          if (audioContext.state === "suspended") audioContext.resume();
+          return audioContext;
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function tone(frequency, duration, type, volume, delay) {
+        const context = getAudioContext();
+        if (!context) return;
+        const start = context.currentTime + (delay || 0);
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+        oscillator.type = type || "sine";
+        oscillator.frequency.setValueAtTime(frequency, start);
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.exponentialRampToValueAtTime(volume || 0.035, start + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+        oscillator.connect(gain);
+        gain.connect(context.destination);
+        oscillator.start(start);
+        oscillator.stop(start + duration + 0.03);
+      }
+
+      function clickSound() {
+        tone(560, 0.045, "sine", 0.016, 0);
+      }
+
+      function correctSound() {
+        tone(659.25, 0.11, "triangle", 0.028, 0);
+        tone(880, 0.13, "triangle", 0.025, 0.09);
+        tone(1046.5, 0.19, "sine", 0.022, 0.19);
+      }
+
+      function wrongSound() {
+        tone(196, 0.15, "sawtooth", 0.018, 0);
+        tone(146.83, 0.2, "sawtooth", 0.014, 0.12);
+      }
+
+      function finishSound() {
+        [523.25, 659.25, 783.99, 1046.5].forEach((frequency, index) => {
+          tone(frequency, 0.24, "triangle", 0.025, index * 0.11);
+        });
+      }
+
+      function speak(text) {
+        if (!soundOn || !text || !("speechSynthesis" in window)) return;
+        try {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = "en-US";
+          utterance.rate = 0.9;
+          utterance.pitch = 1.02;
+          const voices = window.speechSynthesis.getVoices();
+          const preferred = voices.find((voice) => /en[-_]US/i.test(voice.lang)) || voices.find((voice) => /^en/i.test(voice.lang));
+          if (preferred) utterance.voice = preferred;
+          window.speechSynthesis.speak(utterance);
+        } catch (error) {
+          return;
+        }
+      }
+
+      function updateSoundUI() {
+        refs.soundToggle.classList.toggle("is-muted", !soundOn);
+        refs.soundToggle.setAttribute("aria-pressed", String(soundOn));
+        refs.soundToggle.setAttribute("aria-label", soundOn ? "Mute sound" : "Turn sound on");
+        refs.soundToggle.title = soundOn ? "Sound on" : "Sound off";
+      }
+
+      function openModal(modal, options) {
+        if (!modal) return;
+        const settings = options || {};
+        if (activeModal && activeModal !== modal) closeModal(activeModal, true);
+        activeModal = modal;
+        lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        modal.dataset.dismissible = settings.dismissible === false ? "false" : "true";
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        window.setTimeout(() => {
+          const target = modal.querySelector("[data-autofocus], input:not([disabled]), button:not([disabled]):not([hidden])");
+          if (target) target.focus({ preventScroll: true });
+        }, 80);
+      }
+
+      function closeModal(modal, force) {
+        const target = modal || activeModal;
+        if (!target) return;
+        if (target.dataset.dismissible === "false" && !force) return;
+        target.classList.remove("is-open");
+        target.setAttribute("aria-hidden", "true");
+        if (target === activeModal) {
+          activeModal = null;
+          document.body.classList.remove("modal-open");
+          if (target.id === "missionModal") missionState = null;
+          if (lastFocused && document.contains(lastFocused)) {
+            lastFocused.focus({ preventScroll: true });
+          }
+        }
+      }
+
+      function trapFocus(event) {
+        if (!activeModal || event.key !== "Tab") return;
+        const focusable = $$('button:not([disabled]):not([hidden]), input:not([disabled]), [href], [tabindex]:not([tabindex="-1"])', activeModal)
+          .filter((item) => item.offsetParent !== null);
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+
+      function openNameSetup(editing) {
+        const isEditing = Boolean(editing && profile);
+        refs.nameTitle.textContent = isEditing ? "Explorer profile" : "Welcome to the station";
+        refs.nameSubtitle.textContent = isEditing ? "Perfil de explorador" : "Bienvenido a la estación polar";
+        refs.nameKicker.textContent = isEditing ? "Update your identity" : "Polar explorer check-in";
+        refs.nameCopy.textContent = isEditing
+          ? "Update your name or nickname. Your XP, missions and badges stay saved on this device."
+          : "Enter your name or nickname. No PIN, no password — just your explorer identity for this polar adventure.";
+        refs.nameSubmit.textContent = isEditing ? "Save explorer name" : "Begin the expedition";
+        refs.nameClose.hidden = !isEditing;
+        refs.nameCancel.hidden = !isEditing;
+        refs.nameError.textContent = "";
+        refs.explorerName.value = profile ? profile.name : "";
+        openModal(refs.nameModal, { dismissible: isEditing });
+        window.setTimeout(() => {
+          refs.explorerName.focus({ preventScroll: true });
+          refs.explorerName.select();
+        }, 120);
+      }
+
+      function handleNameSubmit(event) {
+        event.preventDefault();
+        const name = sanitizeName(refs.explorerName.value);
+        if (name.length < 2) {
+          refs.nameError.textContent = "Please enter at least 2 characters.";
+          refs.explorerName.focus();
+          return;
+        }
+        const isNew = !profile;
+        if (!profile) {
+          const missions = {};
+          Object.keys(MISSIONS).forEach((branch) => {
+            missions[branch] = { completed: false, best: 0 };
+          });
+          profile = {
+            name,
+            xp: 0,
+            missions,
+            correct: 0,
+            answered: 0,
+            createdAt: new Date().toISOString(),
+            lastPlayed: new Date().toISOString()
+          };
+        } else {
+          profile.name = name;
+        }
+        saveProfile();
+        renderDashboard();
+        refs.nameModal.dataset.dismissible = "true";
+        closeModal(refs.nameModal, true);
+        clickSound();
+        showToast(isNew ? "Welcome aboard, " + name + "! Your polar journey begins." : "Explorer name updated to " + name + ".", "❄");
+        if (isNew) speak("Welcome aboard, explorer. Let's explore the polar regions.");
+      }
+
+      function bindEvents() {
+        refs.soundToggle.addEventListener("click", () => {
+          soundOn = !soundOn;
+          saveSoundPreference();
+          updateSoundUI();
+          if (soundOn) {
+            clickSound();
+            showToast("Sound on. English audio is ready.", "🔊");
+          } else {
+            if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+            showToast("Sound muted.", "🔇");
+          }
+        });
+
+        refs.arcticGateway.addEventListener("click", () => openMission("arctic"));
+        refs.antarcticGateway.addEventListener("click", () => openMission("antarctic"));
+        refs.editNameBtn.addEventListener("click", () => openNameSetup(true));
+        refs.nameForm.addEventListener("submit", handleNameSubmit);
+        refs.nameError.textContent = "";
+        refs.explorerName.addEventListener("input", () => {
+          refs.nameError.textContent = "";
+        });
+
+        $$('[data-mission]').forEach((row) => {
+          row.addEventListener("click", () => openMission(row.dataset.mission));
+        });
+
+        $$('[data-open-leaderboard]').forEach((button) => {
+          button.addEventListener("click", () => {
+            clickSound();
+            openLeaderboard();
+          });
+        });
+
+        $$('[data-pillar]').forEach((button) => {
+          button.addEventListener("click", () => {
+            clickSound();
+            openPillar(button.dataset.pillar);
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          const closer = event.target.closest("[data-close-modal]");
+          if (!closer) return;
+          const modal = document.getElementById(closer.dataset.closeModal);
+          if (modal) closeModal(modal);
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (!activeModal) return;
+          if (event.key === "Escape" && activeModal.dataset.dismissible !== "false") {
+            event.preventDefault();
+            closeModal(activeModal);
+            return;
+          }
+          trapFocus(event);
+        });
+
+        window.addEventListener("resize", () => {
+          if (!refs.missionContent.firstElementChild) return;
+          if (activeModal === refs.missionModal) {
+            refs.missionPanel.style.maxHeight = "calc(100dvh - 24px)";
+          }
+        });
+      }
+
+      buildSnow();
+      updateSoundUI();
+      bindEvents();
+      renderDashboard();
+      if (!profile) {
+        window.setTimeout(() => openNameSetup(false), 450);
+      }
+      function startMission(branch) {
+        const mission = MISSIONS[branch];
+        if (!mission || !profile) return;
+        missionState = {
+          branch,
+          index: 0,
+          correct: 0,
+          xpEarned: 0,
+          answered: false,
+          selectedWord: "",
+          finished: false,
+          displayOptions: [],
+          displayBank: []
+        };
+        refs.missionPanel.style.setProperty("--mission-accent", mission.accent);
+        refs.missionPanel.style.setProperty("--mission-accent-rgb", mission.accentRgb);
+        renderMissionQuestion();
+      }
+
+      function openMission(branch) {
+        if (!profile) {
+          openNameSetup(false);
+          return;
+        }
+        clickSound();
+        startMission(branch);
+        openModal(refs.missionModal);
+      }
+
+      function currentQuestion() {
+        if (!missionState) return null;
+        return MISSIONS[missionState.branch].questions[missionState.index] || null;
+      }
+
+      function renderMissionQuestion() {
+        if (!missionState) return;
+        const mission = MISSIONS[missionState.branch];
+        const question = currentQuestion();
+        if (!question) return;
+        const total = mission.questions.length;
+        const letters = ["A", "B", "C", "D"];
+        missionState.answered = false;
+        missionState.selectedWord = "";
+        missionState.displayOptions = question.options ? shuffle(question.options) : [];
+        missionState.displayBank = question.bank ? shuffle(question.bank) : [];
+
+        const dots = mission.questions.map((item, index) => {
+          let dotClass = "q-dot";
+          if (index < missionState.index) dotClass += " is-done";
+          if (index === missionState.index) dotClass += " is-current";
+          return '<span class="' + dotClass + '"></span>';
+        }).join("");
+
+        let questionMarkup = "";
+        if (question.type === "choice") {
+          questionMarkup =
+            '<h3 class="q-prompt">' + escapeHTML(question.prompt) + '</h3>' +
+            '<p class="q-hint">Choose the best answer. / Elige la mejor respuesta.</p>' +
+            '<div class="options-grid">' +
+            missionState.displayOptions.map((option, index) =>
+              '<button class="option-btn" type="button" data-action="choose" data-value="' + escapeHTML(option) + '">' +
+                '<span class="option-letter">' + letters[index] + '</span>' +
+                '<span>' + escapeHTML(option) + '</span>' +
+              '</button>'
+            ).join("") +
+            '</div>';
+        } else {
+          questionMarkup =
+            '<p class="sentence">' + escapeHTML(question.before) +
+              ' <span class="blank-word" id="blankWord">______</span> ' +
+              escapeHTML(question.after) +
+            '</p>' +
+            '<p class="q-hint">Tap a word to complete the sentence. / Toca una palabra para completar la oración.</p>' +
+            '<div class="word-bank">' +
+            missionState.displayBank.map((word) =>
+              '<button class="word-chip" type="button" data-action="select-word" data-value="' + escapeHTML(word) + '">' + escapeHTML(word) + '</button>'
+            ).join("") +
+            '</div>' +
+            '<div class="fill-check-row">' +
+              '<button class="secondary-btn" id="checkFill" type="button" data-action="check-fill" disabled>Check answer</button>' +
+            '</div>';
+        }
+
+        refs.missionContent.innerHTML =
+          '<div class="mission-head">' +
+            '<div class="mission-emblem" aria-hidden="true">' + mission.emoji + '</div>' +
+            '<div>' +
+              '<span class="mission-kicker">' + escapeHTML(mission.station) + '</span>' +
+              '<h2>' + escapeHTML(mission.title) + '</h2>' +
+              '<p>' + escapeHTML(mission.subtitle) + '</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="mission-meta">' +
+            '<span>Question <strong>' + (missionState.index + 1) + '</strong> / ' + total + '</span>' +
+            '<span class="q-dots" aria-hidden="true">' + dots + '</span>' +
+            '<span class="mission-score"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.3 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8L12 2z"/></svg>' + missionState.correct + ' correct</span>' +
+          '</div>' +
+          '<div class="question-card" id="questionCard">' +
+            '<div class="question-topline">' +
+              '<span class="q-type">' + (question.type === "choice" ? "Multiple choice" : "Complete the sentence") + '</span>' +
+              '<button class="listen-btn" type="button" data-action="speak-question">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 010 7"/></svg>' +
+                'Listen' +
+              '</button>' +
+            '</div>' +
+            questionMarkup +
+          '</div>' +
+          '<div class="feedback" id="feedback" aria-live="polite"></div>' +
+          '<div class="mission-actions">' +
+            '<button class="ghost-btn" type="button" data-action="exit">Exit</button>' +
+            '<button class="primary-btn" type="button" data-action="next" id="nextQuestion" disabled>' +
+              (missionState.index === total - 1 ? "See results" : "Next question") +
+              ' <span aria-hidden="true">→</span>' +
+            '</button>' +
+          '</div>';
+
+        refs.missionPanel.scrollTop = 0;
+      }
+
+      function lockCurrentQuestion() {
+        $$(".option-btn, .word-chip, #checkFill", refs.missionContent).forEach((button) => {
+          button.disabled = true;
+        });
+      }
+
+      function setFeedback(correct, question) {
+        const feedback = $("#feedback", refs.missionContent);
+        const nextButton = $("#nextQuestion", refs.missionContent);
+        if (!feedback || !missionState) return;
+        feedback.className = "feedback is-visible " + (correct ? "is-correct" : "is-wrong");
+        feedback.innerHTML = correct
+          ? '<strong>Correct!' +
+              '<span class="feedback-xp">+10 Polar XP</span></strong><br>' +
+              escapeHTML(question.explain) +
+              '<span class="feedback-es">' + escapeHTML(question.es) + '</span>'
+          : '<strong>Not quite. The answer is “' + escapeHTML(question.answer) + '”.</strong><br>' +
+              escapeHTML(question.explain) +
+              '<span class="feedback-es">' + escapeHTML(question.es) + '</span>';
+        if (nextButton) nextButton.disabled = false;
+      }
+
+      function registerAnswer(correct, question) {
+        if (!missionState || missionState.answered) return;
+        missionState.answered = true;
+        lockCurrentQuestion();
+        setFeedback(correct, question);
+        if (profile) {
+          profile.answered += 1;
+          if (correct) profile.correct += 1;
+        }
+        if (correct) {
+          missionState.correct += 1;
+          missionState.xpEarned += 10;
+          correctSound();
+          speak(question.readText);
+          burstAt(question, true);
+          awardXP(10);
+        } else {
+          wrongSound();
+          speak(question.readText);
+          const card = $("#questionCard", refs.missionContent);
+          if (card) {
+            card.classList.remove("shake");
+            void card.offsetWidth;
+            card.classList.add("shake");
+          }
+          saveProfile();
+        }
+        const nextButton = $("#nextQuestion", refs.missionContent);
+        if (nextButton) {
+          window.setTimeout(() => {
+            nextButton.scrollIntoView({ block: "nearest", behavior: reducedMotion ? "auto" : "smooth" });
+          }, 120);
+        }
+      }
+
+      function burstAt(question, correct) {
+        if (!correct || reducedMotion || !refs.fxLayer) return;
+        const card = $("#questionCard", refs.missionContent);
+        const rect = card ? card.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0, height: 0 };
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + Math.min(rect.height / 2, 100);
+        const colors = ["#72e0ff", "#7ff0c1", "#f2cf8c", "#ffffff"];
+        for (let index = 0; index < 18; index += 1) {
+          const particle = document.createElement("span");
+          particle.className = "fx-particle";
+          const size = randomBetween(3, 7);
+          particle.style.width = size + "px";
+          particle.style.height = size + "px";
+          particle.style.background = colors[index % colors.length];
+          particle.style.left = x + "px";
+          particle.style.top = y + "px";
+          refs.fxLayer.appendChild(particle);
+          const angle = randomBetween(0, Math.PI * 2);
+          const distance = randomBetween(45, 130);
+          particle.animate(
+            [
+              { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
+              { transform: "translate(calc(-50% + " + Math.cos(angle) * distance + "px), calc(-50% + " + (Math.sin(angle) * distance + 35) + "px)) scale(0.2)", opacity: 0 }
+            ],
+            { duration: randomBetween(650, 1000), easing: "cubic-bezier(0.15, 0.7, 0.3, 1)", fill: "forwards" }
+          ).finished.then(() => particle.remove()).catch(() => particle.remove());
+        }
+      }
+
+      function handleChoice(button) {
+        if (!missionState || missionState.answered) return;
+        const question = currentQuestion();
+        if (!question) return;
+        const value = button.dataset.value || "";
+        const correct = value === question.answer;
+        $$(".option-btn", refs.missionContent).forEach((option) => {
+          option.disabled = true;
+          if (option.dataset.value === question.answer) option.classList.add("is-correct");
+        });
+        if (!correct) button.classList.add("is-wrong");
+        clickSound();
+        registerAnswer(correct, question);
+      }
+
+      function handleWordSelection(button) {
+        if (!missionState || missionState.answered || !currentQuestion()) return;
+        missionState.selectedWord = button.dataset.value || "";
+        $$(".word-chip", refs.missionContent).forEach((chip) => {
+          chip.classList.toggle("is-selected", chip === button);
+        });
+        const blank = $("#blankWord", refs.missionContent);
+        if (blank) {
+          blank.textContent = missionState.selectedWord;
+          blank.classList.add("is-filled");
+          blank.classList.remove("is-correct", "is-wrong");
+        }
+        const check = $("#checkFill", refs.missionContent);
+        if (check) check.disabled = false;
+        clickSound();
+        speak(missionState.selectedWord);
+      }
+
+      function handleFillCheck() {
+        if (!missionState || missionState.answered || !missionState.selectedWord) return;
+        const question = currentQuestion();
+        if (!question) return;
+        const correct = missionState.selectedWord === question.answer;
+        const blank = $("#blankWord", refs.missionContent);
+        $$(".word-chip", refs.missionContent).forEach((chip) => {
+          chip.disabled = true;
+          chip.classList.remove("is-selected");
+          if (chip.dataset.value === question.answer) chip.classList.add("is-correct");
+          if (!correct && chip.dataset.value === missionState.selectedWord) chip.classList.add("is-wrong");
+        });
+        if (blank) {
+          blank.classList.remove("is-filled");
+          blank.classList.add(correct ? "is-correct" : "is-wrong");
+        }
+        clickSound();
+        registerAnswer(correct, question);
+      }
+
+      function finishMission() {
+        if (!missionState || missionState.finished || !profile) return;
+        missionState.finished = true;
+        const mission = MISSIONS[missionState.branch];
+        const total = mission.questions.length;
+        const score = missionState.correct;
+        const previous = profile.missions[missionState.branch] || { completed: false, best: 0 };
+        const previousBest = previous.best;
+        const firstClear = !previous.completed;
+        const perfect = score === total;
+        const bonus = (firstClear ? 30 : 0) + (perfect ? 25 : 0);
+        const newBest = score > previousBest;
+        const runXP = missionState.xpEarned + bonus;
+
+        profile.missions[missionState.branch] = {
+          completed: true,
+          best: Math.max(previousBest, score)
+        };
+        saveProfile();
+        if (bonus > 0) {
+          awardXP(bonus);
+        } else {
+          renderDashboard();
+        }
+
+        const level = getLevel(profile.xp);
+        let message = "Every explorer starts somewhere. Review the mission and try again.";
+        let resultIcon = "❄";
+        if (score === total) {
+          message = "Perfect expedition! You read every clue and cleared the station with flying colours.";
+          resultIcon = "🏆";
+        } else if (score >= 4) {
+          message = "Excellent work, explorer. The polar station is impressed by your English.";
+          resultIcon = "✦";
+        } else if (score === 3) {
+          message = "Good progress! Review the new words and replay the mission to earn more XP.";
+          resultIcon = "❄";
+        }
+
+        const bonusLabels = [];
+        if (firstClear) bonusLabels.push("First clear +30 XP");
+        if (perfect) bonusLabels.push("Perfect run +25 XP");
+        if (newBest) bonusLabels.push("New personal best");
+        const bestNow = Math.max(previousBest, score);
+
+        refs.missionContent.innerHTML =
+          '<div class="result-wrap">' +
+            '<div class="result-emblem" aria-hidden="true">' + resultIcon + '</div>' +
+            '<p class="eyebrow">Expedition complete</p>' +
+            '<h2>Station cleared!</h2>' +
+            '<p class="result-es">¡Expedición completada!</p>' +
+            '<p class="result-message">' + message + '</p>' +
+            '<div class="result-stats">' +
+              '<div class="result-stat"><span>Correct</span><strong>' + score + '/' + total + '</strong></div>' +
+              '<div class="result-stat highlight"><span>Polar XP</span><strong>+' + runXP + '</strong></div>' +
+              '<div class="result-stat"><span>Level</span><strong>' + (level.index + 1) + '</strong></div>' +
+            '</div>' +
+            '<div class="result-bonus">✦ ' + bonusLabels.join(" · ") + ' · Best ' + bestNow + '/5</div>' +
+            '<div class="result-actions">' +
+              '<button class="primary-btn" type="button" data-action="retry">Practice again</button>' +
+              '<button class="secondary-btn" type="button" data-action="podium">🏆 Hall of fame</button>' +
+              '<button class="ghost-btn" type="button" data-action="lobby">Back to lobby</button>' +
+            '</div>' +
+          '</div>';
+
+        refs.missionPanel.scrollTop = 0;
+        finishSound();
+        celebrate();
+        speak("Mission complete. Great work, explorer!");
+      }
+
+      function advanceMission() {
+        if (!missionState || !missionState.answered) return;
+        const mission = MISSIONS[missionState.branch];
+        missionState.index += 1;
+        if (missionState.index >= mission.questions.length) {
+          finishMission();
+        } else {
+          clickSound();
+          renderMissionQuestion();
+        }
+      }
+
+      function handleMissionAction(event) {
+        const actionEl = event.target.closest("[data-action]");
+        if (!actionEl || !missionState) return;
+        const action = actionEl.dataset.action;
+        if (action === "choose") {
+          handleChoice(actionEl);
+        } else if (action === "select-word") {
+          handleWordSelection(actionEl);
+        } else if (action === "check-fill") {
+          handleFillCheck();
+        } else if (action === "speak-question") {
+          const question = currentQuestion();
+          if (question) {
+            speak(question.type === "choice" ? question.prompt : question.before + " blank.");
+          }
+        } else if (action === "next") {
+          advanceMission();
+        } else if (action === "exit") {
+          closeModal(refs.missionModal, true);
+          showToast("Your progress is saved automatically.", "❄");
+        } else if (action === "retry") {
+          startMission(missionState.branch);
+          clickSound();
+        } else if (action === "lobby") {
+          const branch = missionState.branch;
+          closeModal(refs.missionModal, true);
+          showToast("Mission saved. " + MISSIONS[branch].title + " is ready when you are.", "✦");
+          renderDashboard();
+        } else if (action === "podium") {
+          closeModal(refs.missionModal, true);
+          openLeaderboard();
+        }
+      }
+
+      refs.missionContent.addEventListener("click", handleMissionAction);
+      function getScores() {
+        const entries = DEMO_SCORES.map((entry) => ({
+          name: entry.name,
+          xp: entry.xp,
+          isUser: false
+        }));
+        if (profile) {
+          entries.push({ name: profile.name, xp: profile.xp, isUser: true });
+        }
+        const merged = new Map();
+        entries.forEach((entry) => {
+          const key = entry.name.trim().toLocaleLowerCase("es");
+          const existing = merged.get(key);
+          if (!existing) {
+            merged.set(key, Object.assign({}, entry));
+          } else {
+            existing.xp = Math.max(existing.xp, entry.xp);
+            existing.isUser = existing.isUser || entry.isUser;
+          }
+        });
+        return Array.from(merged.values()).sort((a, b) => {
+          if (b.xp !== a.xp) return b.xp - a.xp;
+          return a.name.localeCompare(b.name, "es");
+        });
+      }
+
+      function renderPodiumPlace(entry, rank) {
+        if (!entry) return "";
+        const medals = { 1: "🥇", 2: "🥈", 3: "🥉" };
+        return (
+          '<div class="podium-place place-' + rank + (entry.isUser ? " is-user" : "") + '">' +
+            '<div class="podium-avatar" aria-hidden="true">' + escapeHTML(getInitial(entry.name)) + '</div>' +
+            '<span class="podium-medal" aria-hidden="true">' + medals[rank] + '</span>' +
+            '<span class="podium-name">' + escapeHTML(entry.name) +
+              (entry.isUser ? '<span class="podium-youtag">YOU</span>' : "") +
+            '</span>' +
+            '<span class="podium-xp">' + entry.xp + ' XP</span>' +
+            '<div class="podium-block" aria-hidden="true">0' + rank + '</div>' +
+          '</div>'
+        );
+      }
+
+      function openLeaderboard() {
+        const scores = getScores();
+        const userRank = profile ? scores.findIndex((entry) => entry.isUser && entry.name === profile.name) + 1 : 0;
+        const podium = [
+          renderPodiumPlace(scores[1], 2),
+          renderPodiumPlace(scores[0], 1),
+          renderPodiumPlace(scores[2], 3)
+        ].join("");
+        const listRows = scores.slice(3).map((entry, index) => {
+          const rank = index + 4;
+          return (
+            '<li class="ranking-row' + (entry.isUser ? " is-user" : "") + '">' +
+              '<span class="ranking-position">' + rank + '</span>' +
+              '<span class="ranking-avatar" aria-hidden="true">' + escapeHTML(getInitial(entry.name)) + '</span>' +
+              '<span class="ranking-name">' + escapeHTML(entry.name) +
+                (entry.isUser ? '<span class="podium-youtag">YOU</span>' : "") +
+              '</span>' +
+              '<span class="ranking-xp">' + entry.xp + ' XP</span>' +
+            '</li>'
+          );
+        }).join("");
+
+        refs.leaderboardContent.innerHTML =
+          '<div class="hall-head">' +
+            '<span class="trophy-big" aria-hidden="true">🏆</span>' +
+            '<p class="eyebrow">Polar Hall of Fame</p>' +
+            '<h2 id="leaderboardTitle">Champions of the Ice</h2>' +
+            '<p>Podio de exploradores · Local ranking</p>' +
+          '</div>' +
+          '<div class="podium" aria-label="Top three explorers">' + podium + '</div>' +
+          '<div class="podium-floor" aria-hidden="true"></div>' +
+          (listRows ? '<ol class="ranking-list" start="4">' + listRows + '</ol>' : "") +
+          '<div class="hall-footer">' +
+            '<span>' + (profile ? 'Your best: <b>' + profile.xp + ' XP</b><br>' + (userRank ? 'Rank #' + userRank + ' on this device' : 'Start a mission to enter') : 'Join the expedition to enter') +
+            '<br>Demo explorers included</span>' +
+            '<button class="primary-btn" type="button" data-close-modal="leaderboardModal">Keep exploring</button>' +
+          '</div>';
+
+        openModal(refs.leaderboardModal);
+        clickSound();
+      }
+
+      function openPillar(id) {
+        const pillar = PILLARS[id];
+        if (!pillar) return;
+        refs.pillarContent.innerHTML =
+          '<div class="pillar-detail-icon" aria-hidden="true">' + pillar.icon + '</div>' +
+          '<p class="eyebrow">A polar learning pillar</p>' +
+          '<h2 id="pillarTitle">' + escapeHTML(pillar.title) + '</h2>' +
+          '<p class="pillar-es">' + escapeHTML(pillar.es) + '</p>' +
+          '<p class="pillar-description">' + escapeHTML(pillar.description) + '</p>' +
+          '<p class="pillar-description-es">' + escapeHTML(pillar.descriptionEs) + '</p>' +
+          '<div class="word-card">' +
+            '<span>Word of the moment</span>' +
+            '<strong>' + escapeHTML(pillar.word) + '</strong>' +
+            '<small>' + escapeHTML(pillar.translation) + '</small>' +
+          '</div>' +
+          '<p class="phrase-line">“' + escapeHTML(pillar.phrase) + '”</p>' +
+          '<div class="pillar-audio-actions">' +
+            '<button class="secondary-btn" type="button" data-speak="' + escapeHTML(pillar.phrase) + '">Listen to phrase</button>' +
+            '<button class="ghost-btn" type="button" data-speak="' + escapeHTML(pillar.word) + '">Say the word</button>' +
+          '</div>';
+        openModal(refs.pillarModal);
+      }
+
+      refs.pillarContent.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-speak]");
+        if (!button) return;
+        clickSound();
+        speak(button.dataset.speak);
+      });
+    })();
+  </script>
+</body>
+</html>
